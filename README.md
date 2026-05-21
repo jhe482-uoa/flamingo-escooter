@@ -11,6 +11,7 @@ This Python package is used for analysing Flamingo e-scooter movement patterns w
 In terminal: ``` uv pip install flamingo-escooter ```
 
 ## Demonstration of usage
+
 ```python 
 import flamingo_escooter as fe
 
@@ -37,6 +38,8 @@ fe.path_heatmap(trips)             # where do scooters go?
 fe.violation_heatmap(violations)   # where are rules broken?
 fe.transit_heatmap(trips_transit)  # first/last mile patterns based on 20m proximity
 ```
+
+See demo.ipynb for an additional demo file.
 
 ## Example Outputs using demo data
 
