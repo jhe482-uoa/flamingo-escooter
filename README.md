@@ -8,7 +8,19 @@ This Python package is used for analysing Flamingo e-scooter movement patterns w
 - Analyse how many users may be using the scooters to connect to public transport
 
 ## Installation
-In terminal: ``` uv pip install flamingo-escooter ```
+In terminal: 
+```bash
+uv pip install flamingo-escooter 
+```
+
+Alternatively:
+```bash
+pip install uv
+git clone https://github.com/jhe482-uoa/flamingo-escooter
+cd flamingo-escooter
+uv sync
+uv build # Optional
+```
 
 ## Demonstration of usage
 
