@@ -14,7 +14,7 @@ from flamingo_escooter.analysis import (
 from flamingo_escooter.visualisation import (
     path_heatmap,
     violation_heatmap,
-    transit_heatmap
+    first_and_last_mile_heatmap
 )
 
 __version__ = "0.2.0"

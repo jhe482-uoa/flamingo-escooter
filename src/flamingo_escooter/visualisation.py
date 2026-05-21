@@ -77,7 +77,7 @@ def violation_heatmap(violations_gdf, location_type="end"):
     HeatMap(heat_data, radius=10, blur=15, min_opacity=0.2, gradient={0.2: "#ffb3d9", 0.4: "#ff66b3", 0.6: "#ff3399", 0.8: "#e60073", 1.0: "#fe1f68"}).add_to(m)
     return m
 
-def transit_heatmap(trips_gdf, location_type="both"):
+def first_and_last_mile_heatmap(trips_gdf, location_type="both"):
     """
     Render a Folium heatmap of trips that started or ended near a transit stop.
 

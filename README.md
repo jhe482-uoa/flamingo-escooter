@@ -52,9 +52,9 @@ fe.transit_heatmap(trips_transit)  # first/last mile patterns based on 20m proxi
 
 ![Violation Table](docs/violation_table.png)
 
-### Transit Heatmap
+### First and Last Mile Heatmap
 
-![Violation Table](docs/Transit_heat.png)
+![first_and_last_mile_heatmap](docs/Transit_heat.png)
 
 ## Functions
 
@@ -74,7 +74,7 @@ fe.transit_heatmap(trips_transit)  # first/last mile patterns based on 20m proxi
 ### Visualisation
 - `path_heatmap()` - Creates an interactive heatmap showing most concentrated scooter paths through the CBD.
 - `violation_heatmap()` - Creates an interactive heatmap showing where no-parking violations are most concentrated.
-- `transit_heatmap()` - Creates an interactive heatmap showing concentrated areas where scooter trips start or end near public transport stations.
+- `first_and_last_mile_heatmap()` - Creates an interactive heatmap showing concentrated areas where scooter trips start or end near public transport stations.
 
 ## Authors add emails
 
