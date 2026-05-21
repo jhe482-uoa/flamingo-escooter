@@ -54,7 +54,7 @@ fe.transit_heatmap(trips_transit)  # first/last mile patterns based on 20m proxi
 
 ### Transit Heatmap
 
-![Violation Table](docs/transit_heat.png)
+![Violation Table](docs/Transit_heat.png)
 
 ## Functions
 
