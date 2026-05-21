@@ -4,7 +4,7 @@ This Python package is used for analysing Flamingo e-scooter movement patterns w
 - Loads and cleans Flamingo trip data
 - Generate OD flows between SA zones
 - Detect rides ending in no-parking zones
-- Create interactive Folium maps to visualise common routes and parking violation areas
+- Create interactive folium maps to visualise common routes and parking violation areas
 - Analyse how many users may be using the scooters to connect to public transport
 
 ## Installation
@@ -51,6 +51,10 @@ fe.transit_heatmap(trips_transit)  # first/last mile patterns based on 20m proxi
 ### Violation table in wide format
 
 ![Violation Table](docs/violation_table.png)
+
+### Transit Heatmap
+
+![Violation Table](docs/transit_heat.png)
 
 ## Functions
 
