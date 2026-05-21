@@ -1,0 +1,43 @@
+[project]
+name = "flamingo-escooter"
+version = "0.2.0"
+description = "a package focusing on analysing movement patterns within the Auckland CBD, providing tools to clean trip data, easily identify trips ending in restricted no-parking zones, and perform other analysis. It is currently designed to work with Flamingo Scooters dataset only. It is designed to assist Auckland Council, Auckland Transport, and Flamingo Scooters to better understand scooter usage, support infrastructure planning, and improve enforcement of parking restrictions."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "asttokens>=3.0.1",
+    "comm>=0.2.3",
+    "folium>=0.20.0",
+    "geopandas>=1.1.3",
+    "mapclassify>=2.8.1",
+    "matplotlib>=3.10.9",
+    "pandas>=2.3.3",
+    "polyline>=2.0.4",
+    "pytest>=9.0.3",
+    "python-dotenv>=1.2.2",
+]
+
+authors = [
+    { name = "Jeff He", email = "jhe482@aucklanduni.ac.nz" },
+    { name = "Georgia Short", email = "gsho521@aucklanduni.ac.nz" },
+    { name = "Hans Setiawan", email = "hset686@aucklanduni.ac.nz" },
+]
+members = [
+    { name = "Dr. Hyesop Shin", email = "hyesop.shin@auckland.ac.nz" },
+    { name = "Nick Hyland", email = "nick@flamingo.co.nz" },
+]
+
+
+[build-system]
+requires = ["uv_build>=0.10.7,<0.11.0"]
+build-backend = "uv_build"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/flamingo_escooter/**",
+    "README.md",
+    "LICENSE",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/flamingo_escooter"]

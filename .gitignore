@@ -1,0 +1,3 @@
+.env
+*.pyc
+src/flamingo_escooter/data/.DS_Store
