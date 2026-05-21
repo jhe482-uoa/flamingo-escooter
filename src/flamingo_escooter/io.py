@@ -39,8 +39,6 @@ def load_trips(data_file=None):
         df = data_file
     else:
         df = pd.read_csv(data_file)
-    df['startTime'] = pd.to_datetime(df['startTime'])
-    df['endTime'] = pd.to_datetime(df['endTime'])
 
     start_point = gpd.points_from_xy(df.startLongitude, df.startLatitude, crs="EPSG:4326").to_crs("EPSG:2193")
     end_point = gpd.points_from_xy(df.endLongitude, df.endLatitude, crs="EPSG:4326").to_crs("EPSG:2193")
