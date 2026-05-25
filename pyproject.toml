@@ -1,6 +1,6 @@
 [project]
 name = "flamingo-escooter"
-version = "0.2.0"
+version = "0.2.1"
 description = "a package focusing on analysing movement patterns within the Auckland CBD, providing tools to clean trip data, easily identify trips ending in restricted no-parking zones, and perform other analysis. It is currently designed to work with Flamingo Scooters dataset only. It is designed to assist Auckland Council, Auckland Transport, and Flamingo Scooters to better understand scooter usage, support infrastructure planning, and improve enforcement of parking restrictions."
 readme = "README.md"
 requires-python = ">=3.10"

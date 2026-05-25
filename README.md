@@ -10,7 +10,7 @@ This Python package is used for analysing Flamingo e-scooter movement patterns w
 ## Installation
 In terminal: 
 ```bash
-uv pip install flamingo-escooter 
+uv pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ flamingo-escooter 
 ```
 
 Alternatively:

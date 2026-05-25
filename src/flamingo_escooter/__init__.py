@@ -17,4 +17,4 @@ from flamingo_escooter.visualisation import (
     first_and_last_mile_heatmap
 )
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
