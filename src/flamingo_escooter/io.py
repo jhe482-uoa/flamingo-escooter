@@ -17,6 +17,66 @@ WFS_URL = (
 )
 DATA_DIR = Path(__file__).parent / "data"
 
+
+
+def analyse(data_file=None, layer_id=123510, transit_distance=10):
+    """
+    Run the full Flamingo e-scooter analysis pipeline in one call.
+
+    Loads all data and enriches the trip GeoDataFrame with OD zones,
+    geofence violation flags, and transit proximity flags in place.
+
+    Parameters
+    ----------
+    data_file : str | Path | DataFrame, optional
+        Trip data to load. Defaults to the bundled sample CSV.
+    layer_id : int, optional
+        Stats NZ WFS layer ID for zone boundaries. Defaults to 123510 (SA1).
+    transit_distance : int, optional
+        Proximity threshold in metres for transit stops. Defaults to 10.
+
+    Returns
+    -------
+    GeoDataFrame
+        Single enriched trip GeoDataFrame with columns:
+        - origin, destination        : SA zone names from od_flows
+        - is_violation               : True if trip ended in a no-parking zone
+        - violated_area              : zone name if is_violation, else None
+        - start/end_distance_to_transit_m, start/end_near_transit
+
+    Examples
+    --------
+    >>> result = fe.analyse()
+    >>> result[result["is_violation"]][["tripId", "violated_area"]]
+    >>> result[["origin", "destination"]].value_counts()
+    """
+    from .analysis import od_flows, geofence_violations, transit_proximity
+
+    print("Loading trips...")
+    trips = load_trips(data_file)
+
+    print("Loading SA boundaries...")
+    zones = load_sa_cached(layer_id)
+
+    print("Loading geofence zones...")
+    geofence = load_geofence()
+
+    print("Loading transit stations...")
+    transit_stops = load_transit_stations()
+
+    print("Computing OD flows...")
+    trips = od_flows(trips, zones)
+
+    print("Computing geofence violations...")
+    trips = geofence_violations(trips, geofence)
+
+    print("Computing transit proximity...")
+    trips = transit_proximity(trips, transit_stops, distance=transit_distance)
+
+    print("Loading Completed!")
+    return trips
+
+
 def load_trips(data_file=None):
     """
     Load Flamingo Auckland CBD trip data from the bundled CSV.

@@ -27,28 +27,17 @@ uv build # Optional
 ```python 
 import flamingo_escooter as fe
 
-# ── 1. load data ─────────────────────────────────────────────────────────────
-trips   = fe.load_trips()
-zones   = fe.load_sa_cached()
-transit = fe.load_transit_stations()
-geofence = fe.load_geofence()
+trips = fe.analyse()
+print(trips)
 
-# ── 2. origin-destination flows ───────────────────────────────────────────────
-od = fe.od_flows(trips, zones)
-print(od.head())
+fe.path_heatmap(trips)
 
-# ── 3. geofence violations ────────────────────────────────────────────────────
-violations = fe.geofence_violations(trips, geofence)
-print(fe.violations_table_wide(violations))
+violation_df_wide = fe.violations_table_wide(trips)
+print(violation_df_wide)
 
-# ── 4. transit proximity ──────────────────────────────────────────────────────
-# how many trips started/ended within 20m of a transit station?
-trips_transit = fe.transit_proximity(od, transit, 20)
+fe.violation_heatmap(trips)
 
-# ── 5. visualise ──────────────────────────────────────────────────────────────
-fe.path_heatmap(trips)             # where do scooters go?
-fe.violation_heatmap(violations)   # where are rules broken?
-fe.transit_heatmap(trips_transit)  # first/last mile patterns based on 20m proximity
+fe.first_and_last_mile_heatmap(trips)
 ```
 
 See demo.ipynb for an additional demo file.
@@ -73,12 +62,16 @@ See demo.ipynb for an additional demo file.
 
 ## Functions
 
+### Master Function
+- `analyse()` - All in one function that automatically runs Data Loading and Analysis (Apart from violations_table_wide()), return a processed trips GeoDataFrame.
+
 ### Data Loading
 - `load_trips()` - Load and clean Flamingo scooter trip data, converts it into a spatial GeoDataFrame.
 - `load_sa()` - Download Stats NZ SA1 boundaries 
 - `load_sa_cached()` - Load SA1 boundaries from a local cache to avoid repeated API requests
 - `load_geofence()` - Load Flamingo geofence zones and converts them into a GeoDataFrame.
 - `load_transit_stations` - Loads Auckland bus and train station locations into one combined transit GeoDataFrame
+
 
 ### Analysis
 - `od_flows()` - Assigns scooter trip start and end points to statistical areas define by SA1 to create origin-destination flow data
@@ -98,8 +91,7 @@ See demo.ipynb for an additional demo file.
 - Hans Setiawan - hset686@aucklanduni.ac.nz
 
 ## Supervisor
-- Hyesop Shin - hyesop.shin@auckland.ac.nz
+- Dr. Hyesop Shin - hyesop.shin@auckland.ac.nz
 
 ## Industry Partner
-
 - Flamingo Scooters

@@ -1,7 +1,6 @@
 import pytest
 import folium
 import flamingo_escooter as fe
-from dotenv import load_dotenv
 
 
 @pytest.fixture
@@ -17,12 +16,13 @@ def geofence():
     return fe.load_geofence()
 
 @pytest.fixture
-def violations(trips, geofence):
+def trips_with_violations(trips, geofence):
     return fe.geofence_violations(trips, geofence)
 
 @pytest.fixture
 def transit():
     return fe.load_transit_stations()
+
 
 def test_load_trips(trips):
     assert len(trips) > 0
@@ -39,20 +39,25 @@ def test_load_geofence(geofence):
     assert geofence.crs.to_epsg() == 2193
     assert set(geofence["ride_end_allowed"]).issubset({"True", "False", "Unknown"})
 
-def test_geofence_violations(trips, violations):
-    assert len(violations) > 0
-    assert len(violations) <= len(trips)
-    assert "area" in violations.columns
+def test_geofence_violations(trips, trips_with_violations):
+    # all rows preserved, new flag columns added
+    assert len(trips_with_violations) == len(trips)
+    assert "is_violation" in trips_with_violations.columns
+    assert "violated_area" in trips_with_violations.columns
+    assert trips_with_violations["is_violation"].dtype == bool
+    assert trips_with_violations["is_violation"].sum() > 0
 
 @pytest.mark.parametrize("location_type", ["middle", "", "END", 123])
 def test_invalid_location_type_raises(trips, geofence, location_type):
     with pytest.raises((ValueError, TypeError)):
         fe.geofence_violations(trips, geofence, location_type=location_type)
 
-def test_violations_table_wide(violations):
-    table = fe.violations_table_wide(violations)
+def test_violations_table_wide(trips_with_violations):
+    table = fe.violations_table_wide(trips_with_violations)
+    assert "violated_area" in table.columns
+    assert "total_violations" in table.columns
     assert table["total_violations"].is_monotonic_decreasing
-    assert table["total_violations"].sum() == len(violations)
+    assert table["total_violations"].sum() == trips_with_violations["is_violation"].sum()
 
 def test_transit_proximity(trips, transit):
     result = fe.transit_proximity(trips, transit)
@@ -62,6 +67,9 @@ def test_transit_proximity(trips, transit):
 
 def test_path_heatmap(trips):
     assert isinstance(fe.path_heatmap(trips), folium.Map)
+
+def test_violation_heatmap(trips_with_violations):
+    assert isinstance(fe.violation_heatmap(trips_with_violations), folium.Map)
 
 def test_load_sa_cached_writes_cache(tmp_path, monkeypatch):
     import flamingo_escooter.io as fe_io

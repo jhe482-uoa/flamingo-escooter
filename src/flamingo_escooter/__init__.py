@@ -4,6 +4,7 @@ from flamingo_escooter.io import (
     load_sa_cached,
     load_transit_stations,
     load_geofence,
+    analyse
 )
 from flamingo_escooter.analysis import (
     od_flows,
@@ -17,4 +18,4 @@ from flamingo_escooter.visualisation import (
     first_and_last_mile_heatmap
 )
 
-__version__ = "0.2.1"
+__version__ = "0.3.0"
