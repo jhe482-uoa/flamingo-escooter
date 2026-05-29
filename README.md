@@ -22,7 +22,7 @@ uv sync
 uv build # Optional
 ```
 
-## Demonstration of usage
+## Quick-start example
 
 ```python 
 import flamingo_escooter as fe
