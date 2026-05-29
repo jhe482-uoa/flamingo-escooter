@@ -84,7 +84,7 @@ See demo.ipynb for an additional demo file.
 - `violation_heatmap()` - Creates an interactive heatmap showing where no-parking violations are most concentrated.
 - `first_and_last_mile_heatmap()` - Creates an interactive heatmap showing concentrated areas where scooter trips start or end near public transport stations.
 
-## Authors add emails
+## Authors
 
 - Jeff He - jhe482@aucklanduni.ac.nz
 - Georgia Short - gsho521@aucklanduni.ac.nz
