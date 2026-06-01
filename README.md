@@ -61,28 +61,28 @@ See demo.ipynb for an additional demo file.
 ![first_and_last_mile_heatmap](docs/Transit_heat.png)
 
 ## Functions
-
 ### Master Function
-- `analyse()` - All in one function that automatically runs Data Loading and Analysis (Apart from violations_table_wide()), return a processed trips GeoDataFrame.
+- `analyse()` — Runs the full pipeline in one call: loads trips, SA1 boundaries, geofence zones, and transit stations, then computes OD flows, flags geofence violations, and calculates transit proximity. Returns a single enriched trip GeoDataFrame with `origin`, `destination`, `is_violation`, `violated_area`, `start/end_near_transit`, and `start/end_distance_to_transit_m` columns.
 
 ### Data Loading
-- `load_trips()` - Load and clean Flamingo scooter trip data, converts it into a spatial GeoDataFrame.
-- `load_sa()` - Download Stats NZ SA1 boundaries 
-- `load_sa_cached()` - Load SA1 boundaries from a local cache to avoid repeated API requests
-- `load_geofence()` - Load Flamingo geofence zones and converts them into a GeoDataFrame.
-- `load_transit_stations` - Loads Auckland bus and train station locations into one combined transit GeoDataFrame
-
+- `load_trips(data_file=None)` — Loads Flamingo trip CSV, decodes encoded polylines into LineString geometries, and reprojects start/end points to EPSG:2193 (NZTM). Defaults to the bundled sample dataset; accepts a file path or DataFrame.
+- `load_sa(layer_id=123510)` — Downloads Stats NZ SA1 (or SA2) boundaries from the datafinder WFS API, clipped to the Auckland CBD bounding box.
+- `load_sa_cached(layer_id=123510)` — Wraps `load_sa()` with local disk caching at `~/.cache/flamingo_escooter/`. Skips the network call on subsequent runs.
+- `load_geofence(json_file=None)` — Fetches live Flamingo geofence zones from the GBFS API and parses them into a GeoDataFrame with `ride_start_allowed`, `ride_end_allowed`, `ride_through_allowed`, and `maximum_speed_kph` columns. Accepts a pre-loaded JSON dict.
+- `load_transit_stations()` — Loads bundled Auckland bus and train stop locations and merges them into a single GeoDataFrame.
 
 ### Analysis
-- `od_flows()` - Assigns scooter trip start and end points to statistical areas define by SA1 to create origin-destination flow data
-- `geofence_violations()` - Identifies scooter trips that end inside restricted no-parking geofenced zones.
-- `violations_table_wide()` - Summarieses geofence violations by zones in a table.
-- `transit_proximity()` - Calculates how many scooter trips start or end within 20 m of a public transport station.
+- `od_flows(trips_gdf, zones_gdf)` — Spatially joins trip start and end points to SA1 zones, adding `origin` and `destination` columns. Trips outside any zone boundary are dropped.
+- `geofence_violations(trips_gdf, no_park_gdf, location_type="end")` — Flags trips whose endpoint falls inside a no-parking zone. Adds `is_violation` (bool) and `violated_area` (zone name or None) columns to the full trips GeoDataFrame. All rows are preserved.
+- `violations_table_wide(trips_gdf)` — Summarises violations by zone from the output of `geofence_violations()`, returning a wide-format DataFrame with `violated_area` and `total_violations` columns sorted by count descending.
+- `transit_proximity(trips_gdf, transit_gdf, distance=10)` — Finds the nearest transit stop to each trip's start and end point, adding `start/end_distance_to_transit_m` and `start/end_near_transit` columns. Prints a proximity summary to stdout.
 
 ### Visualisation
-- `path_heatmap()` - Creates an interactive heatmap showing most concentrated scooter paths through the CBD.
-- `violation_heatmap()` - Creates an interactive heatmap showing where no-parking violations are most concentrated.
-- `first_and_last_mile_heatmap()` - Creates an interactive heatmap showing concentrated areas where scooter trips start or end near public transport stations.
+All visualisation functions return a `folium.Map` object displayable inline in Jupyter.
+
+- `path_heatmap(trips)` — Interactive heatmap of scooter route density across the CBD, decoded directly from encoded polylines. Hot spots indicate frequently used streets.
+- `violation_heatmap(trips_gdf, location_type="end")` — Interactive heatmap of no-parking violation locations, filtered from `is_violation` column. Accepts the full trips GeoDataFrame from `geofence_violations()` or `analyse()`.
+- `first_and_last_mile_heatmap(trips_gdf, location_type="both")` — Interactive heatmap of trip endpoints near transit stops, filtered from `start/end_near_transit` columns. Supports `"start"`, `"end"`, or `"both"` as toggleable layers.
 
 ## Authors
 
