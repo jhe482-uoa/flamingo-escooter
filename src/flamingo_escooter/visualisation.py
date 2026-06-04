@@ -1,3 +1,4 @@
+import geopandas as gpd
 import folium
 from folium.plugins import HeatMap
 from polyline import polyline
@@ -5,7 +6,7 @@ from polyline import polyline
 GRADIENT = {0.2: "#ffb3d9", 0.4: "#ff66b3", 0.6: "#ff3399", 0.8: "#e60073", 1.0: "#fe1f68"}
 
 
-def path_heatmap(trips):
+def path_heatmap(trips: gpd.GeoDataFrame) -> folium.Map:
     """
     Render a Folium heatmap of trip paths across the Auckland CBD.
 
@@ -28,7 +29,10 @@ def path_heatmap(trips):
     return m
 
 
-def violation_heatmap(trips_gdf, location_type="end"):
+def violation_heatmap(
+    trips_gdf: gpd.GeoDataFrame,
+    location_type: str = "end",
+) -> folium.Map:
     """
     Render a Folium heatmap of geofence violation locations.
 
@@ -71,7 +75,10 @@ def violation_heatmap(trips_gdf, location_type="end"):
     return m
 
 
-def first_and_last_mile_heatmap(trips_gdf, location_type="both"):
+def first_and_last_mile_heatmap(
+    trips_gdf: gpd.GeoDataFrame,
+    location_type: str = "both",
+) -> folium.Map:
     """
     Render a Folium heatmap of trips that started or ended near a transit stop.
 

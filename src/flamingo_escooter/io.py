@@ -19,7 +19,11 @@ DATA_DIR = Path(__file__).parent / "data"
 
 
 
-def analyse(data_file=None, layer_id=123510, transit_distance=10):
+def analyse(
+    data_file: str | Path | pd.DataFrame | None = None,
+    layer_id: int = 123510,
+    transit_distance: int = 10,
+) -> gpd.GeoDataFrame:
     """
     Run the full Flamingo e-scooter analysis pipeline in one call.
 
@@ -77,7 +81,9 @@ def analyse(data_file=None, layer_id=123510, transit_distance=10):
     return trips
 
 
-def load_trips(data_file=None):
+def load_trips(
+    data_file: str | Path | pd.DataFrame | None = None,
+) -> gpd.GeoDataFrame:
     """
     Load Flamingo Auckland CBD trip data from the bundled CSV.
 
@@ -108,7 +114,7 @@ def load_trips(data_file=None):
             coords = polyline.decode(encoded_str)
             flipped_coords = [(c[1], c[0]) for c in coords]
             return LineString(flipped_coords)
-        except:
+        except Exception: 
             return None
     
     df['path_line'] = df['encodedPolyline'].apply(decode_to_line)
@@ -121,7 +127,9 @@ def load_trips(data_file=None):
     return gdf
 
     
-def load_geofence(json_file=None):
+def load_geofence(
+    json_file: dict | None = None,
+) -> gpd.GeoDataFrame:
     """
     Parse a GBFS geofencing_zones JSON response into a GeoDataFrame.
 
@@ -170,7 +178,7 @@ def load_geofence(json_file=None):
     return gdf
 
 
-def _get_api_key():
+def _get_api_key() -> str:
     load_dotenv()
     key = os.getenv("STATS_NZ_API_KEY")
   
@@ -183,7 +191,10 @@ def _get_api_key():
 
 
 # SA2 2026: 123515, SA1 2026: 123510
-def load_sa(layer_id=123510, api_key=None):
+def load_sa(
+    layer_id: int = 123510,
+    api_key: str | None = None,
+) -> gpd.GeoDataFrame:
     """
         Download Stats NZ statistical area boundaries via WFS.
 
@@ -232,7 +243,10 @@ def load_sa(layer_id=123510, api_key=None):
     return gpd.read_file(BytesIO(response.content))
 
 
-def load_sa_cached(layer_id=123510, api_key=None):
+def load_sa_cached(
+    layer_id: int = 123510,
+    api_key: str | None = None,
+) -> gpd.GeoDataFrame:
     """
     Download Stats NZ boundaries with local disk caching.
 
@@ -263,8 +277,15 @@ def load_sa_cached(layer_id=123510, api_key=None):
     gdf.to_file(cache_file, driver="GPKG")
     return gdf
 
-def load_transit_stations():
-    """Load Auckland transit stations. (Bus + Train)"""
+def load_transit_stations() -> gpd.GeoDataFrame:
+    """
+    Load Auckland public transport stations.
+
+    Returns
+    -------
+    GeoDataFrame
+        Bus and train station locations in EPSG:2193.
+    """
     path = DATA_DIR / "akl_transit_station.gpkg"
     stations = gpd.read_file(path)
     return stations.to_crs(2193)

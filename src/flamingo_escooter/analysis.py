@@ -1,7 +1,10 @@
 import geopandas as gpd
 
 
-def od_flows(trips_gdf, zones_gdf):
+def od_flows(
+    trips_gdf: gpd.GeoDataFrame,
+    zones_gdf: gpd.GeoDataFrame,
+) -> gpd.GeoDataFrame:
     """
     Aggregate trips into an origin-destination matrix by spatial zone.
 
@@ -50,7 +53,11 @@ def od_flows(trips_gdf, zones_gdf):
 
     return gdf
 
-def geofence_violations(trips_gdf, no_park_gdf, location_type="end"):
+def geofence_violations(
+    trips_gdf: gpd.GeoDataFrame,
+    no_park_gdf: gpd.GeoDataFrame,
+    location_type: str = "end",
+) -> gpd.GeoDataFrame:
     """
     Flag trips that start or end inside a no-parking geofence zone.
 
@@ -104,7 +111,9 @@ def geofence_violations(trips_gdf, no_park_gdf, location_type="end"):
     return trips_gdf
 
 
-def violations_table_wide(trips_gdf):
+def violations_table_wide(
+    trips_gdf: gpd.GeoDataFrame,
+) -> gpd.GeoDataFrame:
     """
     Pivot violation records into a wide-format summary table.
 
@@ -133,7 +142,11 @@ def violations_table_wide(trips_gdf):
         .reset_index(drop=True)
     )
 
-def transit_proximity(trips_gdf, transit_gdf, distance=10):
+def transit_proximity(
+    trips_gdf: gpd.GeoDataFrame,
+    transit_gdf: gpd.GeoDataFrame,
+    distance: int = 10,
+) -> gpd.GeoDataFrame:
     """
     Identify scooter trips that start or end near public transport stops.
 
