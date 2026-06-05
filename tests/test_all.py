@@ -76,3 +76,6 @@ def test_load_sa_cached_writes_cache(tmp_path, monkeypatch):
     monkeypatch.setattr(fe_io, "CACHE_DIR", tmp_path)
     fe.load_sa_cached()
     assert any(tmp_path.iterdir())
+
+    def test_actions_failure_check():
+    assert False
