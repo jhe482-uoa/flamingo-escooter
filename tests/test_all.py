@@ -72,10 +72,18 @@ def test_violation_heatmap(trips_with_violations):
     assert isinstance(fe.violation_heatmap(trips_with_violations), folium.Map)
 
 def test_load_sa_cached_writes_cache(tmp_path, monkeypatch):
+    import geopandas as gpd
+    from shapely.geometry import Polygon
     import flamingo_escooter.io as fe_io
+
     monkeypatch.setattr(fe_io, "CACHE_DIR", tmp_path)
+
+    dummy_sa = gpd.GeoDataFrame(
+        {"area_id": [1]},
+        geometry=[Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])],
+        crs="EPSG:2193",
+    )
+    monkeypatch.setattr(fe_io, "load_sa", lambda layer_id=123510, api_key=None: dummy_sa)
+
     fe.load_sa_cached()
     assert any(tmp_path.iterdir())
-
-    def test_actions_failure_check():
-    assert False

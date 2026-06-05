@@ -46,7 +46,7 @@ See demo.ipynb for an additional demo file.
 
 ### Path Heatmap
 
-![Path Heatmap](docs/path_heatmap2.png)
+![Path Heatmap](docs/path_heatmap.png)
 
 ### Violation Heatmap
 
@@ -58,7 +58,7 @@ See demo.ipynb for an additional demo file.
 
 ### First and Last Mile Heatmap
 
-![first_and_last_mile_heatmap](docs/Transit_heat.png)
+![first_and_last_mile_heatmap](docs/transit_heatmap.png)
 
 ## Functions
 ### Master Function
