@@ -1,103 +1,164 @@
 ---
-title: "API Reference"
+title: "API Reference Documentation"
 format: html
 ---
 
 # API Reference
 This page provides the technical reference for all public functions in the `flamingo_escooter` package. Each entry lists the function’s purpose, parameters, and return values.
 
-## load_trips()
-Load Flamingo trip data, decode polylines, and construct route and point geometries.
+## `analyse(data_file=None, layer_id=123510, transit_distance=10)`
+Run the full Flamingo e-scooter analysis pipeline in one call. Loads trips, SA boundaries, geofence zones, transit stations and enriches the trips GeoDataFrame with OD zones, geofence violation flags and transit proximity flags.
 
-**Parameters:**  
-None.
+**Parameters:**
 
-**Returns:**  
-GeoDataFrame with `path_line`, `start_point`, `end_point`, and all original trip attributes.
+- `data_file` : str | Path | DataFrame, optional — Trip data to load; defaults to the bundled sample CSV.
 
-## load_sa_cached()
-Load SA1/SA2 statistical area boundaries (downloaded once, then cached).
+- `layer_id` : int, optional
+ — Stats NZ WFS layer ID for zone boundaries (default: 123510).
 
-**Parameters:**  
-None.
+- `transit_distance` : int, optional — Proximity threshold in metres for transit stops (default: 10).
 
-**Returns:**  
-GeoDataFrame of SA boundaries in EPSG:2193.
+**Returns:**
+- GeoDataFrame: enriched trip GeoDataFrame with columns: `origin`, `destination`, `is_violation`, `violated_area`, `start_distance_to_transit_m`, `end_distance_to_transit_m`, `start_near_transit`, `end_near_transit`.
 
-## od_flows(trips, zones)
-Assign each trip to an origin and destination zone via spatial joins.
+## `load_trips(data_file=None)`
+Load Flamingo Auckland trip data, parse timestamps, decode encoded polylines into `LineString` geometries, and reproject to EPSG:2193.
 
-**Parameters:**  
-- trips — GeoDataFrame from load_trips()  
-- zones — GeoDataFrame from load_sa_cached()
+**Parameters:**
 
-**Returns:**  
-GeoDataFrame with added `origin` and `destination` columns.
+- `data_file` : str | Path | DataFrame, optional — CSV path or DataFrame. If `None` the bundled sample CSV is used.
 
-## load_geofence()
-Load Flamingo GBFS geofence polygons and associated rule attributes.
+**Returns:**
+- GeoDataFrame: one row per trip. Columns include `path_line` (LineString, geometry), `start_point`, `end_point`, and the original CSV columns.
 
-**Parameters:**  
-None.
+## `load_sa(layer_id=123510, api_key=None)`
+Download Stats NZ statistical area boundaries via WFS and return them in EPSG:2193. If `api_key` is `None` the function reads `STATS_NZ_API_KEY` from the environment or `.env`.
 
-**Returns:**  
-GeoDataFrame with zone rules and polygon geometries.
+**Parameters:**
 
-## geofence_violations(od, geofence)
-Identify trips that start or end inside a no‑parking or restricted zone.
+- `layer_id` : int, optional 
 
-**Parameters:**  
-- od — output of od_flows()  
-- geofence — output of load_geofence()
+— Stats NZ WFS layer ID (default: 123510 for SA1 2026).
 
-**Returns:**  
-GeoDataFrame with `is_violation` and `violated_area`.
+- `api_key` : str, optional — Stats NZ API key.
 
-## load_transit_stations()
-Load bus and train stop locations for transit proximity analysis.
+**Returns:**
+- GeoDataFrame: statistical area boundaries in EPSG:2193.
 
-**Parameters:**  
-None.
+**Raises:**
+- `EnvironmentError` if no API key is available.
 
-**Returns:**  
-GeoDataFrame of transit stops in EPSG:2193.
+## `load_sa_cached(layer_id=123510, api_key=None)`
+Same as `load_sa()` but caches the downloaded GeoPackage to `~/.cache/flamingo_escooter/{layer_id}_statsnz.gpkg` for subsequent calls.
 
-## transit_proximity(trips, transit, distance=10)
-Compute distance from each trip’s start/end point to the nearest transit stop and flag proximity.
+**Parameters:**
 
-**Parameters:**  
-- trips — GeoDataFrame with start_point and end_point  
-- transit — GeoDataFrame of transit stops  
-- distance — threshold in metres (default: 10)
+- `layer_id` : int, optional — Stats NZ WFS layer ID.
 
-**Returns:**  
-GeoDataFrame with transit distance and proximity fields.
+- `api_key` : str, optional — Stats NZ API key.
 
-## path_heatmap(trips)
-Generate a heatmap of all scooter route geometries.
+**Returns:**
+- GeoDataFrame: statistical area boundaries in EPSG:2193 (from cache if available).
 
-**Parameters:**  
-- trips — GeoDataFrame with path_line
+## `load_geofence(json_file=None)`
+Parse a GBFS `geofencing_zones` JSON response into a GeoDataFrame. Flattens nested rules to separate columns and reprojects to EPSG:2193.
 
-**Returns:**  
-Folium map object.
+**Parameters:**
 
-## violation_heatmap(violations, location_type="end")
-Visualise where geofence violations occur.
+- `json_file` : dict, optional — parsed GBFS JSON. If `None`, the function requests the Flamingo GBFS endpoint.
 
-**Parameters:**  
-- violations — GeoDataFrame with violation fields  
-- location_type — "start", "end", or "both"
+**Returns:**
+- GeoDataFrame: one row per zone with `name`, `ride_start_allowed`, `ride_end_allowed`, `ride_through_allowed`, `maximum_speed_kph`, and `geometry` in EPSG:2193.
 
-**Returns:**  
-Folium map object.
+## `load_transit_stations()`
+Load bundled Auckland public transport stations GeoPackage and return as EPSG:2193.
 
-## first_and_last_mile_heatmap(trips, location_type="both")
-Visualise trips that start or end near transit stops.
+**Parameters:**
 
-**Parameters:**  
-- trips — GeoDataFrame with transit proximity fields  
-- location_type — "start", "end", or "both"
+- None.
 
-**Returns:**  
-Folium map object.
+**Returns:**
+- GeoDataFrame: bus and train station locations in EPSG:2193.
+
+## `od_flows(trips_gdf, zones_gdf)`
+Aggregate trips into origin-destination by spatially joining trip start/end points to provided zone boundaries.
+
+**Parameters:**
+
+- `trips_gdf` : GeoDataFrame — must contain `start_point` and `end_point` in EPSG:2193.
+
+- `zones_gdf` : GeoDataFrame — zone geometries in EPSG:2193; the zone name column is inferred.
+
+**Returns:**
+- GeoDataFrame: input trips with added `origin` and `destination` columns.
+
+## `geofence_violations(trips_gdf, no_park_gdf, location_type='end')`
+Flag trips that start or end inside a no-parking geofence zone. Adds `is_violation` and `violated_area` to the returned GeoDataFrame.
+
+**Parameters:**
+
+- `trips_gdf` : GeoDataFrame — must have `start_point` and `end_point` in EPSG:2193.
+
+- `no_park_gdf` : GeoDataFrame — output of `load_geofence()`; must have `name` and `ride_end_allowed`.
+- `location_type` : str — `'end'` (default) or `'start'`.
+
+**Returns:**
+- GeoDataFrame: trips with `is_violation` (bool) and `violated_area` (str or `None`).
+
+## `violations_table_wide(trips_gdf)`
+Aggregate trip-level violations into a zone-level summary table.
+
+**Parameters:**
+
+- `trips_gdf` : GeoDataFrame — output of `geofence_violations()`.
+
+**Returns:**
+- DataFrame: wide-format summary with columns like `violated_area` and `total_violations`.
+
+## `transit_proximity(trips_gdf, transit_gdf, distance=10)`
+Compute nearest transit stop distances for trip origins and destinations, and flag whether they are within the supplied threshold.
+
+**Parameters:**
+
+- `trips_gdf` : GeoDataFrame — must have `start_point` and `end_point` in EPSG:2193.
+
+- `transit_gdf` : GeoDataFrame — transit stop locations in EPSG:2193.
+
+- `distance` : int, optional — proximity threshold in metres (default: 10).
+
+**Returns:**
+- GeoDataFrame: trips with `start_distance_to_transit_m`, `end_distance_to_transit_m`, `start_near_transit`, `end_near_transit`.
+
+## `path_heatmap(trips)`
+Render a Folium heatmap of trip paths. Decodes `encodedPolyline` values and plots decoded points.
+
+**Parameters:**
+
+- `trips` : GeoDataFrame — must have an `encodedPolyline` column.
+
+**Returns:**
+- `folium.Map` object containing a heatmap layer.
+
+## `violation_heatmap(trips_gdf, location_type='end')`
+Render a Folium heatmap of geofence violation locations filtered to `is_violation == True`.
+
+**Parameters:**
+
+- `trips_gdf` : GeoDataFrame — must have `is_violation` and `start_point`/`end_point` in EPSG:2193.
+
+- `location_type` : str — `'end'` (default) or `'start'`.
+
+**Returns:**
+- `folium.Map` object with violation heatmap.
+
+## `first_and_last_mile_heatmap(trips_gdf, location_type='both')`
+Render a Folium heatmap of trips that started or ended near a transit stop.
+
+**Parameters:**
+
+- `trips_gdf` : GeoDataFrame — output of `transit_proximity()`, must have `start_near_transit` and `end_near_transit`.
+
+- `location_type` : str — `'start'`, `'end'`, or `'both'` (default).
+
+**Returns:**
+- `folium.Map` object with layers for start/end proximity and a layer control.

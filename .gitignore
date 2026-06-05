@@ -2,3 +2,5 @@
 *.pyc
 src/flamingo_escooter/data/.DS_Store
 src/flamingo_escooter/.DS_Store
+pairwork.qmd
+/api_reference_files

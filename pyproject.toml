@@ -1,23 +1,14 @@
+[build-system]
+requires = ["uv_build>=0.10.7,<0.11.0"]
+build-backend = "uv_build"
+
 [project]
 name = "flamingo-escooter"
-version = "0.3.0"
-license = { file = "LICENSE" }
-description = "a package focusing on analysing movement patterns within the Auckland CBD, providing tools to clean trip data, easily identify trips ending in restricted no-parking zones, and perform other analysis. It is currently designed to work with Flamingo Scooters dataset only. It is designed to assist Auckland Council, Auckland Transport, and Flamingo Scooters to better understand scooter usage, support infrastructure planning, and improve enforcement of parking restrictions."
+version = "0.3.2"
+description = "Tools for analyzing Flamingo E-Scooter movement patterns, trip data cleaning, and parking restriction compliance within the Auckland CBD."
 readme = "README.md"
+license = { file = "LICENSE" }
 requires-python = ">=3.10"
-dependencies = [
-    "asttokens>=3.0.1",
-    "comm>=0.2.3",
-    "folium>=0.20.0",
-    "geopandas>=1.1.3",
-    "mapclassify>=2.8.1",
-    "matplotlib>=3.10.9",
-    "pandas>=2.3.3",
-    "polyline>=2.0.4",
-    "pytest>=9.0.3",
-    "python-dotenv>=1.2.2",
-]
-
 authors = [
     { name = "Jeff He", email = "jhe482@aucklanduni.ac.nz" },
     { name = "Georgia Short", email = "gsho521@aucklanduni.ac.nz" },
@@ -27,10 +18,41 @@ members = [
     { name = "Dr. Hyesop Shin", email = "hyesop.shin@auckland.ac.nz" },
     { name = "Nick Hyland", email = "nick@flamingo.co.nz" },
 ]
+keywords = [
+    "escooter",
+    "auckland",
+    "urban-mobility",
+    "transport",
+    "giscience",
+    "spatial-analysis",
+    "new-zealand",
+    "flamingo-scooters",
+    "city-centre",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
 
-[build-system]
-requires = ["uv_build>=0.10.7,<0.11.0"]
-build-backend = "uv_build"
+# Core dependencies strictly required to run basic data cleaning and processing
+dependencies = [
+    "pandas>=2.3.3",
+    "geopandas>=1.1.3",
+    "polyline>=2.0.4",
+    "python-dotenv>=1.2.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/jhe482-uoa/flamingo-escooter"
+Repository = "https://github.com/jhe482-uoa/flamingo-escooter"
+"Bug Tracker" = "https://github.com/jhe482-uoa/flamingo-escooter/issues"
 
 [tool.hatch.build.targets.sdist]
 include = [
@@ -41,3 +63,8 @@ include = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/flamingo_escooter"]
+
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
