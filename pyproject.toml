@@ -28,6 +28,9 @@ members = [
     { name = "Nick Hyland", email = "nick@flamingo.co.nz" },
 ]
 
+[project.urls]
+Repository = "https://github.com/jhe482-uoa/flamingo-escooter"
+Documentation = "https://github.com/jhe482-uoa/flamingo-escooter/tree/main/docs"
 
 [build-system]
 requires = ["uv_build>=0.10.7,<0.11.0"]
