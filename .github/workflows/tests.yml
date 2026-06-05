@@ -13,10 +13,12 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.10"
 
       - run: pip install uv
 
       - run: uv sync
 
       - run: uv run pytest
+        env:
+          STATS_NZ_API_KEY: ${{ secrets.STATS_NZ_API_KEY }}
