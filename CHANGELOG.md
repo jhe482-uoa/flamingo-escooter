@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.4.0] — 2026-06-05
+
+### Changed
+- **Small metadata changes and file naming updates to ensure consistent naming convention. Final version before full PyPI release.
+
 ## [0.3.0] — 2026-05-27
 
 ### Added

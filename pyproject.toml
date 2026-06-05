@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "flamingo-escooter"
-version = "0.3.2"
+version = "0.4.0"
 description = "Tools for analyzing Flamingo E-Scooter movement patterns, trip data cleaning, and parking restriction compliance within the Auckland CBD."
 readme = "README.md"
 license = { file = "LICENSE" }
