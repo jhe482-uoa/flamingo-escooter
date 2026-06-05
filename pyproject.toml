@@ -41,7 +41,6 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 
-# Core dependencies strictly required to run basic data cleaning and processing
 dependencies = [
     "pandas>=2.3.3",
     "geopandas>=1.1.3",
