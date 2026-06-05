@@ -1,0 +1,24 @@
+---
+title: "Documentation"
+---
+
+# flamingo_escooter Documentation
+
+## Installation
+pip install flamingo-escooter
+
+## Quickstart
+See the full quickstart here:
+[Quickstart](quickstart.qmd)
+
+## Usage Workflow
+Follow our flow here:
+[Usage Workflow](usage.qmd)
+
+## API Reference
+All available functions and parameters here:
+[API Reference](api.qmd)
+
+## Changelog
+Changes along the way here:
+[Changelog](CHANGELOG.md)

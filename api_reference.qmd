@@ -1,0 +1,103 @@
+---
+title: "API Reference"
+format: html
+---
+
+# API Reference
+This page provides the technical reference for all public functions in the `flamingo_escooter` package. Each entry lists the function’s purpose, parameters, and return values.
+
+## load_trips()
+Load Flamingo trip data, decode polylines, and construct route and point geometries.
+
+**Parameters:**  
+None.
+
+**Returns:**  
+GeoDataFrame with `path_line`, `start_point`, `end_point`, and all original trip attributes.
+
+## load_sa_cached()
+Load SA1/SA2 statistical area boundaries (downloaded once, then cached).
+
+**Parameters:**  
+None.
+
+**Returns:**  
+GeoDataFrame of SA boundaries in EPSG:2193.
+
+## od_flows(trips, zones)
+Assign each trip to an origin and destination zone via spatial joins.
+
+**Parameters:**  
+- trips — GeoDataFrame from load_trips()  
+- zones — GeoDataFrame from load_sa_cached()
+
+**Returns:**  
+GeoDataFrame with added `origin` and `destination` columns.
+
+## load_geofence()
+Load Flamingo GBFS geofence polygons and associated rule attributes.
+
+**Parameters:**  
+None.
+
+**Returns:**  
+GeoDataFrame with zone rules and polygon geometries.
+
+## geofence_violations(od, geofence)
+Identify trips that start or end inside a no‑parking or restricted zone.
+
+**Parameters:**  
+- od — output of od_flows()  
+- geofence — output of load_geofence()
+
+**Returns:**  
+GeoDataFrame with `is_violation` and `violated_area`.
+
+## load_transit_stations()
+Load bus and train stop locations for transit proximity analysis.
+
+**Parameters:**  
+None.
+
+**Returns:**  
+GeoDataFrame of transit stops in EPSG:2193.
+
+## transit_proximity(trips, transit, distance=10)
+Compute distance from each trip’s start/end point to the nearest transit stop and flag proximity.
+
+**Parameters:**  
+- trips — GeoDataFrame with start_point and end_point  
+- transit — GeoDataFrame of transit stops  
+- distance — threshold in metres (default: 10)
+
+**Returns:**  
+GeoDataFrame with transit distance and proximity fields.
+
+## path_heatmap(trips)
+Generate a heatmap of all scooter route geometries.
+
+**Parameters:**  
+- trips — GeoDataFrame with path_line
+
+**Returns:**  
+Folium map object.
+
+## violation_heatmap(violations, location_type="end")
+Visualise where geofence violations occur.
+
+**Parameters:**  
+- violations — GeoDataFrame with violation fields  
+- location_type — "start", "end", or "both"
+
+**Returns:**  
+Folium map object.
+
+## first_and_last_mile_heatmap(trips, location_type="both")
+Visualise trips that start or end near transit stops.
+
+**Parameters:**  
+- trips — GeoDataFrame with transit proximity fields  
+- location_type — "start", "end", or "both"
+
+**Returns:**  
+Folium map object.
