@@ -34,4 +34,4 @@ __all__ = [
     "first_and_last_mile_heatmap",
 ]
 
-__version__ = "0.4.0"
+__version__ = "0.4.1"

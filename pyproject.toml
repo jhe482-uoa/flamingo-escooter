@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "flamingo-escooter"
-version = "0.4.0"
+version = "0.4.1"
 description = "Tools for analyzing Flamingo E-Scooter movement patterns, trip data cleaning, and parking restriction compliance within the Auckland CBD."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -58,6 +58,7 @@ Homepage = "https://github.com/jhe482-uoa/flamingo-escooter"
 Documentation = "https://jhe482-uoa.github.io/flamingo-escooter/"
 "API Documentation" = "https://jhe482-uoa.github.io/flamingo-escooter/api-reference.html"
 "Source Code" = "https://github.com/jhe482-uoa/flamingo-escooter"
+Changelog = "https://github.com/jhe482-uoa/flamingo-escooter/blob/main/CHANGELOG.md"
 
 [tool.coverage.run]
 source = ["flamingo_escooter"]

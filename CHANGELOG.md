@@ -1,9 +1,15 @@
 # Changelog
 
+## [0.4.1] — 2026-06-06
+
+### Changed
+- Minor code change and new pytest test addition.
+- Updated metadata to reflect the new GitHub Page.
+
 ## [0.4.0] — 2026-06-05
 
 ### Changed
-- **Small metadata changes and file naming updates to ensure consistent naming convention. Final version before full PyPI release.
+- Small metadata changes and file naming updates to ensure consistent naming convention. Final version before full PyPI release.
 
 ## [0.3.0] — 2026-05-27
 
