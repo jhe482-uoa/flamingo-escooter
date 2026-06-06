@@ -1,0 +1,275 @@
+[
+  {
+    "objectID": "getting-started.html",
+    "href": "getting-started.html",
+    "title": "Getting Started",
+    "section": "",
+    "text": "Documentation\n    \n      \n        Home\n        Getting Started\n        API Reference\n        Examples\n        Visualizations"
+  },
+  {
+    "objectID": "getting-started.html#install-from-pypi",
+    "href": "getting-started.html#install-from-pypi",
+    "title": "Getting Started",
+    "section": "Install from PyPI",
+    "text": "Install from PyPI\npip install flamingo-escooter"
+  },
+  {
+    "objectID": "getting-started.html#install-from-source",
+    "href": "getting-started.html#install-from-source",
+    "title": "Getting Started",
+    "section": "Install from source",
+    "text": "Install from source\ngit clone https://github.com/jhe482-uoa/flamingo-escooter.git\ncd flamingo-escooter\npip install -e ."
+  },
+  {
+    "objectID": "getting-started.html#optional-uv-based-setup",
+    "href": "getting-started.html#optional-uv-based-setup",
+    "title": "Getting Started",
+    "section": "Optional UV-based setup",
+    "text": "Optional UV-based setup\nIf you use uv for environment management, the repository supports the uv workflow:\nuv sync\nuv build\nThis installs dependencies and configures the environment for development and testing."
+  },
+  {
+    "objectID": "getting-started.html#load-the-bundled-sample-dataset",
+    "href": "getting-started.html#load-the-bundled-sample-dataset",
+    "title": "Getting Started",
+    "section": "Load the bundled sample dataset",
+    "text": "Load the bundled sample dataset\nfrom flamingo_escooter import load_trips\n\ntrips = load_trips()\nprint(trips.shape)\nprint(trips.columns)\nThe package ships with demo data so you can explore results without needing your own CSV file."
+  },
+  {
+    "objectID": "getting-started.html#first-analysis-example",
+    "href": "getting-started.html#first-analysis-example",
+    "title": "Getting Started",
+    "section": "First analysis example",
+    "text": "First analysis example\nfrom flamingo_escooter import analyse\n\ntrips = analyse()\nprint(trips[['origin', 'destination', 'is_violation']].head())\nprint(f\"Total violations: {trips['is_violation'].sum()}\")"
+  },
+  {
+    "objectID": "getting-started.html#loading-geofence-zones-and-checking-violations",
+    "href": "getting-started.html#loading-geofence-zones-and-checking-violations",
+    "title": "Getting Started",
+    "section": "Loading geofence zones and checking violations",
+    "text": "Loading geofence zones and checking violations\nfrom flamingo_escooter import load_trips, load_geofence, geofence_violations\n\ntrips = load_trips()\nzones = load_geofence()\nviolations = geofence_violations(trips, zones)\nprint(violations[violations['is_violation']].head())"
+  },
+  {
+    "objectID": "getting-started.html#recommended-workflow",
+    "href": "getting-started.html#recommended-workflow",
+    "title": "Getting Started",
+    "section": "Recommended workflow",
+    "text": "Recommended workflow\n\nInstall the package.\nLoad your trip data with load_trips(data_file=...) or use the bundled demo data.\nLoad geofence zones with load_geofence().\nRun geofence_violations() and optionally od_flows().\nCompute transit proximity with transit_proximity().\nVisualise results using path_heatmap() and violation_heatmap()."
+  },
+  {
+    "objectID": "getting-started.html#notes",
+    "href": "getting-started.html#notes",
+    "title": "Getting Started",
+    "section": "Notes",
+    "text": "Notes\n\nThe package is designed for Auckland CBD analysis and uses NZTM projection (EPSG:2193).\nDemo outputs are included in the repository as PNG images.\ndemo.ipynb is a useful reference for interactive exploration."
+  },
+  {
+    "objectID": "api-reference.html",
+    "href": "api-reference.html",
+    "title": "API Reference",
+    "section": "",
+    "text": "Documentation\n    \n      \n        Home\n        Getting Started\n        API Reference\n        Examples\n        Visualizations"
+  },
+  {
+    "objectID": "api-reference.html#master-function",
+    "href": "api-reference.html#master-function",
+    "title": "API Reference",
+    "section": "Master function",
+    "text": "Master function\n\nanalyse(data_file=None, layer_id=123510, transit_distance=10)\nRun the full Flamingo e-scooter analysis pipeline in one call.\n\nDescription: Loads trips, fetches SA boundaries, computes origin and destination zones, flags geofence violations, and calculates transit proximity.\nParameters:\n\ndata_file : str | Path | DataFrame, optional — path to a trip CSV file or a preloaded DataFrame.\nlayer_id : int, optional — Stats NZ WFS layer ID for statistical areas. Default: 123510.\ntransit_distance : int, optional — distance in metres used to flag trips near transit stops. Default: 10.\n\nReturns: GeoDataFrame\n\nfrom flamingo_escooter import analyse\n\nresult = analyse()\nprint(result[['origin', 'destination', 'is_violation']].head())"
+  },
+  {
+    "objectID": "api-reference.html#io-api",
+    "href": "api-reference.html#io-api",
+    "title": "API Reference",
+    "section": "IO API",
+    "text": "IO API\n\nload_trips(data_file=None)\nLoad Flamingo trip data, parse timestamps, decode encoded polylines into LineString geometries, and project start/end points to NZTM (EPSG:2193).\n\nParameters:\n\ndata_file : str | Path | DataFrame, optional — CSV path or DataFrame. If None, the bundled sample dataset is used.\n\nReturns: GeoDataFrame\n\n\n\nload_sa(layer_id=123510, api_key=None)\nDownload Stats NZ statistical area boundaries via WFS and return them in EPSG:2193.\n\nParameters:\n\nlayer_id : int, optional — Stats NZ layer ID.\napi_key : str, optional — API key for Stats NZ. If None, the function reads STATS_NZ_API_KEY from the environment or .env.\n\nReturns: GeoDataFrame\n\n\n\nload_sa_cached(layer_id=123510, api_key=None)\nLoad SA boundaries with local disk caching to avoid repeated network downloads.\n\nReturns: GeoDataFrame\n\n\n\nload_geofence(json_file=None)\nParse Flamingo GBFS geofence zones into a GeoDataFrame.\n\nParameters:\n\njson_file : dict, optional — parsed GBFS JSON payload. If None, the package fetches the default Flamingo endpoint.\n\nReturns: GeoDataFrame\n\n\n\nload_transit_stations()\nLoad bundled Auckland bus and train stops and return them in EPSG:2193.\n\nReturns: GeoDataFrame"
+  },
+  {
+    "objectID": "api-reference.html#analysis-api",
+    "href": "api-reference.html#analysis-api",
+    "title": "API Reference",
+    "section": "Analysis API",
+    "text": "Analysis API\n\nod_flows(trips_gdf, zones_gdf)\nSpatially join trip start and end points to statistical zones to compute origin and destination labels.\n\nParameters:\n\ntrips_gdf : GeoDataFrame with start_point and end_point geometries.\nzones_gdf : GeoDataFrame of zone boundaries in EPSG:2193.\n\nReturns: GeoDataFrame\n\n\n\ngeofence_violations(trips_gdf, no_park_gdf, location_type='end')\nFlag trips whose endpoint (or start point) lies inside a no-parking geofence zone.\n\nParameters:\n\ntrips_gdf : GeoDataFrame with trip geometries.\nno_park_gdf : GeoDataFrame of geofence zones.\nlocation_type : str, optional — 'end' or 'start'. Default: 'end'.\n\nReturns: GeoDataFrame\n\n\n\nviolations_table_wide(trips_gdf)\nSummarise geofence violations by zone in wide format.\n\nParameters:\n\ntrips_gdf : GeoDataFrame from geofence_violations().\n\nReturns: DataFrame\n\n\n\ntransit_proximity(trips_gdf, transit_gdf, distance=10)\nCompute the nearest transit stop distance for each trip origin and destination and flag whether they are within the given threshold.\n\nParameters:\n\ntrips_gdf : GeoDataFrame with start_point and end_point.\ntransit_gdf : GeoDataFrame of transit stops.\ndistance : int, optional — distance threshold in metres. Default: 10.\n\nReturns: GeoDataFrame"
+  },
+  {
+    "objectID": "api-reference.html#visualisation-api",
+    "href": "api-reference.html#visualisation-api",
+    "title": "API Reference",
+    "section": "Visualisation API",
+    "text": "Visualisation API\n\npath_heatmap(trips_gdf)\nCreate an interactive Folium heatmap showing route density from decoded trip polylines.\n\nParameters:\n\ntrips_gdf : GeoDataFrame containing encoded or decoded route geometry.\n\nReturns: folium.Map\n\n\n\nviolation_heatmap(trips_gdf, location_type='end')\nCreate an interactive heatmap of geofence or parking violation locations.\n\nParameters:\n\ntrips_gdf : GeoDataFrame from geofence_violations().\nlocation_type : str, optional — 'end' or 'start'.\n\nReturns: folium.Map\n\n\n\nfirst_and_last_mile_heatmap(trips_gdf, location_type='both')\nRender a heatmap of trip endpoints near transit stops for first- and last-mile analysis.\n\nParameters:\n\ntrips_gdf : GeoDataFrame with transit proximity flags.\nlocation_type : str, optional — 'start', 'end', or 'both'.\n\nReturns: folium.Map"
+  },
+  {
+    "objectID": "api-reference.html#example-usage",
+    "href": "api-reference.html#example-usage",
+    "title": "API Reference",
+    "section": "Example usage",
+    "text": "Example usage\nfrom flamingo_escooter import load_trips, load_geofence, geofence_violations, path_heatmap\n\ntrips = load_trips()\nzones = load_geofence()\nviolations = geofence_violations(trips, zones)\nmap_obj = path_heatmap(trips)\nmap_obj.save('path_heatmap.html')"
+  },
+  {
+    "objectID": "api-reference.html#notes",
+    "href": "api-reference.html#notes",
+    "title": "API Reference",
+    "section": "Notes",
+    "text": "Notes\n\nUse load_sa_cached() when you want to reuse downloaded statistical area boundaries.\nThe package is intended to support Auckland CBD transport and parking analysis."
+  },
+  {
+    "objectID": "visualizations.html",
+    "href": "visualizations.html",
+    "title": "Visualization Gallery",
+    "section": "",
+    "text": "Documentation\n    \n      \n        Home\n        Getting Started\n        API Reference\n        Examples\n        Visualizations"
+  },
+  {
+    "objectID": "visualizations.html#path-heatmap",
+    "href": "visualizations.html#path-heatmap",
+    "title": "Visualization Gallery",
+    "section": "Path heatmap",
+    "text": "Path heatmap\n\n\n\nPath Heatmap\n\n\nThe path_heatmap() function renders an interactive route density map. It is useful for identifying high-volume corridors and common scooter travel routes across the Auckland CBD.\nfrom flamingo_escooter import load_trips, path_heatmap\n\ntrips = load_trips()\nmap_obj = path_heatmap(trips)\nmap_obj.save('path_heatmap.html')"
+  },
+  {
+    "objectID": "visualizations.html#violation-heatmap",
+    "href": "visualizations.html#violation-heatmap",
+    "title": "Visualization Gallery",
+    "section": "Violation heatmap",
+    "text": "Violation heatmap\n\n\n\nViolation Heatmap\n\n\nUse violation_heatmap(trips_gdf, location_type='end') to display where trips ended inside restricted geofence or no-parking zones.\nfrom flamingo_escooter import load_trips, load_geofence, geofence_violations, violation_heatmap\n\ntrips = load_trips()\nzones = load_geofence()\nviolations = geofence_violations(trips, zones)\nmap_obj = violation_heatmap(violations)\nmap_obj.save('violation_heatmap.html')"
+  },
+  {
+    "objectID": "visualizations.html#transit-proximity",
+    "href": "visualizations.html#transit-proximity",
+    "title": "Visualization Gallery",
+    "section": "Transit proximity",
+    "text": "Transit proximity\n\n\n\nTransit Proximity\n\n\nThe first_and_last_mile_heatmap() visualizes trip endpoints near public transport stops, helping to reveal first/last-mile connectivity patterns.\nfrom flamingo_escooter import load_trips, load_transit_stations, transit_proximity, first_and_last_mile_heatmap\n\ntrips = load_trips()\nstops = load_transit_stations()\ntrips = transit_proximity(trips, stops, distance=20)\nmap_obj = first_and_last_mile_heatmap(trips, location_type='both')\nmap_obj.save('transit_heatmap.html')"
+  },
+  {
+    "objectID": "visualizations.html#violation-summary-visuals",
+    "href": "visualizations.html#violation-summary-visuals",
+    "title": "Visualization Gallery",
+    "section": "Violation summary visuals",
+    "text": "Violation summary visuals\n\n\n\nViolation Table\n\n\nUse violations_table_wide(trips_gdf) to generate a zone-level table of violation counts and support management decisions."
+  },
+  {
+    "objectID": "visualizations.html#workflow-tips",
+    "href": "visualizations.html#workflow-tips",
+    "title": "Visualization Gallery",
+    "section": "Workflow tips",
+    "text": "Workflow tips\n\nStart with path_heatmap() to explore route density.\nUse violation_heatmap() to focus on problem areas.\nUse transit proximity analysis to evaluate network access and identify gaps in connections."
+  },
+  {
+    "objectID": "visualizations.html#reproducing-the-gallery",
+    "href": "visualizations.html#reproducing-the-gallery",
+    "title": "Visualization Gallery",
+    "section": "Reproducing the gallery",
+    "text": "Reproducing the gallery\nThe package includes sample dataset and demo visuals. Re-run the examples above with your own data to generate customized maps for reports or presentations."
+  },
+  {
+    "objectID": "examples.html",
+    "href": "examples.html",
+    "title": "Examples",
+    "section": "",
+    "text": "Documentation\n    \n      \n        Home\n        Getting Started\n        API Reference\n        Examples\n        Visualizations"
+  },
+  {
+    "objectID": "examples.html#full-pipeline-example",
+    "href": "examples.html#full-pipeline-example",
+    "title": "Examples",
+    "section": "Full pipeline example",
+    "text": "Full pipeline example\nRun the complete end-to-end analysis in a single call.\nfrom flamingo_escooter import analyse\n\ntrips = analyse()\nprint(trips[['origin', 'destination', 'is_violation']].head())\nprint(f\"Violations found: {trips['is_violation'].sum()}\")\nThis example loads the default sample data, computes OD zones, flags violations, and calculates transit proximity."
+  },
+  {
+    "objectID": "examples.html#load-and-inspect-trip-data",
+    "href": "examples.html#load-and-inspect-trip-data",
+    "title": "Examples",
+    "section": "Load and inspect trip data",
+    "text": "Load and inspect trip data\nfrom flamingo_escooter import load_trips\n\ntrips = load_trips()\nprint(trips.columns.tolist())\nprint(trips.head())\nUse load_trips(data_file='path/to/trips.csv') to analyse your own Flamingo trip CSV."
+  },
+  {
+    "objectID": "examples.html#geofence-and-violation-detection",
+    "href": "examples.html#geofence-and-violation-detection",
+    "title": "Examples",
+    "section": "Geofence and violation detection",
+    "text": "Geofence and violation detection\nfrom flamingo_escooter import load_trips, load_geofence, geofence_violations\n\ntrips = load_trips()\nzones = load_geofence()\nviolations = geofence_violations(trips, zones)\nprint(violations.query('is_violation').shape)\nprint(violations[['is_violation', 'violated_area']].head())\nThis example loads the default geofence zones and flags trips ending inside restricted no-parking areas."
+  },
+  {
+    "objectID": "examples.html#summarise-violations",
+    "href": "examples.html#summarise-violations",
+    "title": "Examples",
+    "section": "Summarise violations",
+    "text": "Summarise violations\nfrom flamingo_escooter import violations_table_wide\n\nsummary = violations_table_wide(violations)\nprint(summary.head(10))\nThe summary table is useful for identifying the worst-affected zones and comparing counts."
+  },
+  {
+    "objectID": "examples.html#transit-proximity-analysis",
+    "href": "examples.html#transit-proximity-analysis",
+    "title": "Examples",
+    "section": "Transit proximity analysis",
+    "text": "Transit proximity analysis\nfrom flamingo_escooter import load_trips, load_transit_stations, transit_proximity\n\ntrips = load_trips()\nstops = load_transit_stations()\nproximity = transit_proximity(trips, stops, distance=20)\nprint(proximity[['start_near_transit', 'end_near_transit']].sum())\nThis shows how many trips begin or end close to public transport stops."
+  },
+  {
+    "objectID": "examples.html#save-visual-outputs",
+    "href": "examples.html#save-visual-outputs",
+    "title": "Examples",
+    "section": "Save visual outputs",
+    "text": "Save visual outputs\nfrom flamingo_escooter import path_heatmap, violation_heatmap\n\ntrips = load_trips()\nmap_route = path_heatmap(trips)\nmap_route.save('path_heatmap.html')\n\nmap_violations = violation_heatmap(trips)\nmap_violations.save('violation_heatmap.html')"
+  },
+  {
+    "objectID": "examples.html#caching-sa-boundary-downloads",
+    "href": "examples.html#caching-sa-boundary-downloads",
+    "title": "Examples",
+    "section": "Caching SA boundary downloads",
+    "text": "Caching SA boundary downloads\nfrom flamingo_escooter import load_sa_cached\n\nzones = load_sa_cached()\nprint(zones.head())\nUse load_sa_cached() to avoid repeated downloads from the Stats NZ API."
+  },
+  {
+    "objectID": "examples.html#more-resources",
+    "href": "examples.html#more-resources",
+    "title": "Examples",
+    "section": "More resources",
+    "text": "More resources\n\ndemo.ipynb — interactive notebook walkthrough.\nsrc/flamingo_escooter/data/flamingo_trip_dataset_sample.csv — sample dataset.\ndocs/ contains example gallery images you can reproduce with the package."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Flamingo E-Scooter Documentation",
+    "section": "",
+    "text": "Documentation\n    \n      \n        Home\n        Getting Started\n        API Reference\n        Examples\n        Visualizations"
+  },
+  {
+    "objectID": "index.html#what-this-package-does",
+    "href": "index.html#what-this-package-does",
+    "title": "Flamingo E-Scooter Documentation",
+    "section": "What this package does",
+    "text": "What this package does\n\nLoad, clean, and enrich Flamingo trip datasets.\nDecode encoded route polylines into spatial geometries.\nCompute origin-destination flows across Auckland statistical areas.\nDetect parking and geofence violations inside restricted zones.\nMeasure transit proximity for first- and last-mile analysis.\nGenerate interactive visualizations of routes and violation hotspots."
+  },
+  {
+    "objectID": "index.html#documentation-pages",
+    "href": "index.html#documentation-pages",
+    "title": "Flamingo E-Scooter Documentation",
+    "section": "Documentation pages",
+    "text": "Documentation pages\n\nGetting Started — install the package and run the first analysis.\nAPI Reference — complete function documentation.\nExamples — practical workflows and code recipes.\nVisualization Gallery — sample outputs and map guidance."
+  },
+  {
+    "objectID": "index.html#quick-start",
+    "href": "index.html#quick-start",
+    "title": "Flamingo E-Scooter Documentation",
+    "section": "Quick start",
+    "text": "Quick start\nfrom flamingo_escooter import analyse\n\ntrips = analyse()\nprint(trips[['origin', 'destination', 'is_violation']].head())\nThe analyse() function runs the full pipeline in one call: load trips, fetch SA boundary zones, compute OD flows, detect violations, and calculate transit proximity."
+  },
+  {
+    "objectID": "index.html#why-use-flamingo-e-scooter",
+    "href": "index.html#why-use-flamingo-e-scooter",
+    "title": "Flamingo E-Scooter Documentation",
+    "section": "Why use Flamingo E-Scooter?",
+    "text": "Why use Flamingo E-Scooter?\n\nWorks with Auckland CBD trip datasets and NZTM projection (EPSG:2193).\nDesigned for rapid exploration of scooter behaviour and geofence compliance.\nSupports both raw CSV input and built-in demo data.\nProduces summary tables, violation metrics, and Folium map outputs."
+  },
+  {
+    "objectID": "index.html#included-resources",
+    "href": "index.html#included-resources",
+    "title": "Flamingo E-Scooter Documentation",
+    "section": "Included resources",
+    "text": "Included resources\n\ndemo.ipynb — interactive notebook example.\nsrc/flamingo_escooter/data/flamingo_trip_dataset_sample.csv — bundled sample trip data.\nGallery images and visual examples stored in docs/."
+  },
+  {
+    "objectID": "index.html#sample-outputs",
+    "href": "index.html#sample-outputs",
+    "title": "Flamingo E-Scooter Documentation",
+    "section": "Sample outputs",
+    "text": "Sample outputs\n\n\n\nPath Heatmap\n\n\n\n\n\nViolation Heatmap\n\n\n\n\n\nTransit Proximity"
+  }
+]
