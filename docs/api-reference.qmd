@@ -3,8 +3,6 @@ title: API Reference
 format: html
 ---
 
-# API Reference
-
 This page documents the public API for the `flamingo_escooter` package. Use these functions to load trip data, enrich it with spatial context, detect violations, and generate visual outputs.
 
 ## Master function

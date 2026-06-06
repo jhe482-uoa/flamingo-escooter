@@ -3,8 +3,6 @@ title: Getting Started
 format: html
 ---
 
-# Getting Started
-
 Get up and running with Flamingo E-Scooter by installing the package, loading data, and running the first analysis.
 
 ## Install from PyPI

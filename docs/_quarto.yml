@@ -14,7 +14,7 @@ format:
     css: styles.css
     base-url: /flamingo-escooter/
     toc: true
-    toc-location: left
+    toc-location: right
     toc-depth: 2
     highlight-style: github
     code-fold: true

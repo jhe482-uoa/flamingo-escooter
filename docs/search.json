@@ -4,7 +4,7 @@
     "href": "getting-started.html",
     "title": "Getting Started",
     "section": "",
-    "text": "Documentation\n    \n      \n        Home\n        Getting Started\n        API Reference\n        Examples\n        Visualizations"
+    "text": "Documentation\n    \n      \n        Home\n        Getting Started\n        API Reference\n        Examples\n        Visualizations\nGet up and running with Flamingo E-Scooter by installing the package, loading data, and running the first analysis."
   },
   {
     "objectID": "getting-started.html#install-from-pypi",
@@ -67,7 +67,7 @@
     "href": "api-reference.html",
     "title": "API Reference",
     "section": "",
-    "text": "Documentation\n    \n      \n        Home\n        Getting Started\n        API Reference\n        Examples\n        Visualizations"
+    "text": "Documentation\n    \n      \n        Home\n        Getting Started\n        API Reference\n        Examples\n        Visualizations\nThis page documents the public API for the flamingo_escooter package. Use these functions to load trip data, enrich it with spatial context, detect violations, and generate visual outputs."
   },
   {
     "objectID": "api-reference.html#master-function",
@@ -116,7 +116,7 @@
     "href": "visualizations.html",
     "title": "Visualization Gallery",
     "section": "",
-    "text": "Documentation\n    \n      \n        Home\n        Getting Started\n        API Reference\n        Examples\n        Visualizations"
+    "text": "Documentation\n    \n      \n        Home\n        Getting Started\n        API Reference\n        Examples\n        Visualizations\nThis gallery shows the visual output you can create with the Flamingo E-Scooter package. Use these examples to reproduce the maps and charts from your own analysis."
   },
   {
     "objectID": "visualizations.html#path-heatmap",
@@ -165,7 +165,7 @@
     "href": "examples.html",
     "title": "Examples",
     "section": "",
-    "text": "Documentation\n    \n      \n        Home\n        Getting Started\n        API Reference\n        Examples\n        Visualizations"
+    "text": "Documentation\n    \n      \n        Home\n        Getting Started\n        API Reference\n        Examples\n        Visualizations\nThis page contains practical workflows for using Flamingo E-Scooter with both bundled demo data and your own datasets."
   },
   {
     "objectID": "examples.html#full-pipeline-example",
@@ -228,7 +228,7 @@
     "href": "index.html",
     "title": "Flamingo E-Scooter Documentation",
     "section": "",
-    "text": "Documentation\n    \n      \n        Home\n        Getting Started\n        API Reference\n        Examples\n        Visualizations"
+    "text": "Documentation\n    \n      \n        Home\n        Getting Started\n        API Reference\n        Examples\n        Visualizations\nFlamingo E-Scooter is a Python package for analysing Flamingo scooter movement patterns in the Auckland CBD. It is built to help transport planners, local authorities, and data analysts understand route flows, detect geofence and parking violations, and evaluate connections to public transport."
   },
   {
     "objectID": "index.html#what-this-package-does",

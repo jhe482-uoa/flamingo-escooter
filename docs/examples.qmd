@@ -3,8 +3,6 @@ title: Examples
 format: html
 ---
 
-# Examples
-
 This page contains practical workflows for using Flamingo E-Scooter with both bundled demo data and your own datasets.
 
 ## Full pipeline example

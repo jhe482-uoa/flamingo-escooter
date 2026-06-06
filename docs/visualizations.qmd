@@ -3,8 +3,6 @@ title: Visualization Gallery
 format: html
 ---
 
-# Visualization Gallery
-
 This gallery shows the visual output you can create with the Flamingo E-Scooter package. Use these examples to reproduce the maps and charts from your own analysis.
 
 ## Path heatmap

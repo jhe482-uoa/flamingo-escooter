@@ -3,8 +3,6 @@ title: Flamingo E-Scooter Documentation
 format: html
 ---
 
-# Flamingo E-Scooter
-
 Flamingo E-Scooter is a Python package for analysing Flamingo scooter movement patterns in the Auckland CBD. It is built to help transport planners, local authorities, and data analysts understand route flows, detect geofence and parking violations, and evaluate connections to public transport.
 
 ## What this package does
