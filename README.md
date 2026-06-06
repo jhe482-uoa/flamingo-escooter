@@ -8,39 +8,45 @@ This Python package is used for analysing Flamingo e-scooter movement patterns w
 - Analyse how many users may be using the scooters to connect to public transport
 
 ## Installation
-In terminal: 
+Install from PyPI:
 ```bash
-uv pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ flamingo-escooter 
+pip install flamingo-escooter
 ```
 
-Alternatively:
+Install from TestPyPI:
 ```bash
-pip install uv
+pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ flamingo-escooter
+```
+
+Install from source for development:
+```bash
 git clone https://github.com/jhe482-uoa/flamingo-escooter
 cd flamingo-escooter
-uv sync
-uv build # Optional
+python3 -m pip install -e .[dev]
 ```
 
 ## Quick-start example
 
-```python 
+```python
 import flamingo_escooter as fe
 
-trips = fe.analyse()
-print(trips)
+trips = fe.load_trips()
+print(trips.shape)
+print(trips.columns)
 
-fe.path_heatmap(trips)
-
-violation_df_wide = fe.violations_table_wide(trips)
-print(violation_df_wide)
-
-fe.violation_heatmap(trips)
-
-fe.first_and_last_mile_heatmap(trips)
+zones = fe.load_sa_cached()
+od = fe.od_flows(trips, zones)
+print(od.loc[0, ["origin", "destination"]])
 ```
 
-See demo.ipynb for an additional demo file.
+Expected output:
+- A shape tuple for the loaded trips, e.g. `(N, M)`
+- A columns index containing `start_point`, `end_point`, and `path_line`
+- An origin/destination pair from the first row after `od_flows()`
+
+Use `fe.analyse()` to run the full pipeline and return an enriched GeoDataFrame.
+
+See `demo.ipynb` for an additional demonstration.
 
 ## Example Outputs using demo data
 

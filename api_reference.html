@@ -23,6 +23,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -68,138 +103,195 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="api-reference" class="level1">
 <h1>API Reference</h1>
-<p>This page provides the technical reference for all public functions in the <code>flamingo_escooter</code> package. Each entry lists the function’s purpose, parameters, and return values.</p>
-<section id="analysedata_filenone-layer_id123510-transit_distance10" class="level2">
-<h2 class="anchored" data-anchor-id="analysedata_filenone-layer_id123510-transit_distance10"><code>analyse(data_file=None, layer_id=123510, transit_distance=10)</code></h2>
-<p>Run the full Flamingo e-scooter analysis pipeline in one call. Loads trips, SA boundaries, geofence zones, transit stations and enriches the trips GeoDataFrame with OD zones, geofence violation flags and transit proximity flags.</p>
+<p>This page provides the technical reference for all public functions in the <code>flamingo_escooter</code> package.</p>
+<section id="io-api" class="level2">
+<h2 class="anchored" data-anchor-id="io-api">IO API</h2>
+<section id="analysedata_filenone-layer_id123510-transit_distance10" class="level3">
+<h3 class="anchored" data-anchor-id="analysedata_filenone-layer_id123510-transit_distance10"><code>analyse(data_file=None, layer_id=123510, transit_distance=10)</code></h3>
+<p>Run the full Flamingo e-scooter analysis pipeline in one call.</p>
+<p>Loads trip data, SA boundaries, geofence zones, and transit stations, then enriches trips with OD zone labels, violation flags, and transit proximity metrics.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
-<li><p><code>data_file</code> : str | Path | DataFrame, optional — Trip data to load; defaults to the bundled sample CSV.</p></li>
-<li><p><code>layer_id</code> : int, optional — Stats NZ WFS layer ID for zone boundaries (default: 123510).</p></li>
-<li><p><code>transit_distance</code> : int, optional — Proximity threshold in metres for transit stops (default: 10).</p></li>
+<li><p><code>data_file</code> : <code>str | Path | DataFrame</code>, optional - Trip data to load. Defaults to the bundled sample CSV.</p></li>
+<li><p><code>layer_id</code> : <code>int</code>, optional - Stats NZ WFS layer ID for zone boundaries. Default: <code>123510</code>.</p></li>
+<li><p><code>transit_distance</code> : <code>int</code>, optional - Proximity threshold in metres. Default: <code>10</code>.</p></li>
 </ul>
-<p><strong>Returns:</strong> - GeoDataFrame: enriched trip GeoDataFrame with columns: <code>origin</code>, <code>destination</code>, <code>is_violation</code>, <code>violated_area</code>, <code>start_distance_to_transit_m</code>, <code>end_distance_to_transit_m</code>, <code>start_near_transit</code>, <code>end_near_transit</code>.</p>
+<p><strong>Returns:</strong> - <code>GeoDataFrame</code> - enriched trip data with additional columns such as <code>origin</code>, <code>destination</code>, <code>is_violation</code>, <code>violated_area</code>, <code>start_distance_to_transit_m</code>, <code>end_distance_to_transit_m</code>, <code>start_near_transit</code>, <code>end_near_transit</code>.</p>
+<p><strong>Example:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> flamingo_escooter <span class="im">import</span> analyse</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> analyse()</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(result.head())</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(result[<span class="st">"is_violation"</span>].<span class="bu">sum</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="load_tripsdata_filenone" class="level2">
-<h2 class="anchored" data-anchor-id="load_tripsdata_filenone"><code>load_trips(data_file=None)</code></h2>
+<section id="load_tripsdata_filenone" class="level3">
+<h3 class="anchored" data-anchor-id="load_tripsdata_filenone"><code>load_trips(data_file=None)</code></h3>
 <p>Load Flamingo Auckland trip data, parse timestamps, decode encoded polylines into <code>LineString</code> geometries, and reproject to EPSG:2193.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
-<li><code>data_file</code> : str | Path | DataFrame, optional — CSV path or DataFrame. If <code>None</code> the bundled sample CSV is used.</li>
+<li><code>data_file</code> : <code>str | Path | DataFrame</code>, optional - CSV path or DataFrame. If <code>None</code>, the bundled sample CSV is used.</li>
 </ul>
-<p><strong>Returns:</strong> - GeoDataFrame: one row per trip. Columns include <code>path_line</code> (LineString, geometry), <code>start_point</code>, <code>end_point</code>, and the original CSV columns.</p>
+<p><strong>Returns:</strong> - <code>GeoDataFrame</code> - one row per trip, with <code>path_line</code>, <code>start_point</code>, <code>end_point</code>, and original trip columns.</p>
+<p><strong>Example:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> flamingo_escooter <span class="im">import</span> load_trips</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>trips <span class="op">=</span> load_trips()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(trips.head())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="load_salayer_id123510-api_keynone" class="level2">
-<h2 class="anchored" data-anchor-id="load_salayer_id123510-api_keynone"><code>load_sa(layer_id=123510, api_key=None)</code></h2>
-<p>Download Stats NZ statistical area boundaries via WFS and return them in EPSG:2193. If <code>api_key</code> is <code>None</code> the function reads <code>STATS_NZ_API_KEY</code> from the environment or <code>.env</code>.</p>
+<section id="load_salayer_id123510-api_keynone" class="level3">
+<h3 class="anchored" data-anchor-id="load_salayer_id123510-api_keynone"><code>load_sa(layer_id=123510, api_key=None)</code></h3>
+<p>Download Stats NZ statistical area boundaries via WFS and return them in EPSG:2193.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
-<li><code>layer_id</code> : int, optional</li>
+<li><p><code>layer_id</code> : <code>int</code>, optional - Stats NZ WFS layer ID. Default: <code>123510</code>.</p></li>
+<li><p><code>api_key</code> : <code>str</code>, optional - Stats NZ API key. If <code>None</code>, reads <code>STATS_NZ_API_KEY</code> from the environment or <code>.env</code>.</p></li>
 </ul>
-<p>— Stats NZ WFS layer ID (default: 123510 for SA1 2026).</p>
-<ul>
-<li><code>api_key</code> : str, optional — Stats NZ API key.</li>
-</ul>
-<p><strong>Returns:</strong> - GeoDataFrame: statistical area boundaries in EPSG:2193.</p>
+<p><strong>Returns:</strong> - <code>GeoDataFrame</code> - statistical area boundaries in EPSG:2193.</p>
 <p><strong>Raises:</strong> - <code>EnvironmentError</code> if no API key is available.</p>
 </section>
-<section id="load_sa_cachedlayer_id123510-api_keynone" class="level2">
-<h2 class="anchored" data-anchor-id="load_sa_cachedlayer_id123510-api_keynone"><code>load_sa_cached(layer_id=123510, api_key=None)</code></h2>
-<p>Same as <code>load_sa()</code> but caches the downloaded GeoPackage to <code>~/.cache/flamingo_escooter/{layer_id}_statsnz.gpkg</code> for subsequent calls.</p>
+<section id="load_sa_cachedlayer_id123510-api_keynone" class="level3">
+<h3 class="anchored" data-anchor-id="load_sa_cachedlayer_id123510-api_keynone"><code>load_sa_cached(layer_id=123510, api_key=None)</code></h3>
+<p>Load Stats NZ boundaries with local disk caching.</p>
+<p>On first call, downloads boundaries and caches them at <code>~/.cache/flamingo_escooter/{layer_id}_statsnz.gpkg</code>.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
-<li><p><code>layer_id</code> : int, optional — Stats NZ WFS layer ID.</p></li>
-<li><p><code>api_key</code> : str, optional — Stats NZ API key.</p></li>
+<li><p><code>layer_id</code> : <code>int</code>, optional - Stats NZ WFS layer ID. Default: <code>123510</code>.</p></li>
+<li><p><code>api_key</code> : <code>str</code>, optional - Stats NZ API key.</p></li>
 </ul>
-<p><strong>Returns:</strong> - GeoDataFrame: statistical area boundaries in EPSG:2193 (from cache if available).</p>
+<p><strong>Returns:</strong> - <code>GeoDataFrame</code> - cached statistical area boundaries in EPSG:2193.</p>
 </section>
-<section id="load_geofencejson_filenone" class="level2">
-<h2 class="anchored" data-anchor-id="load_geofencejson_filenone"><code>load_geofence(json_file=None)</code></h2>
+<section id="load_geofencejson_filenone" class="level3">
+<h3 class="anchored" data-anchor-id="load_geofencejson_filenone"><code>load_geofence(json_file=None)</code></h3>
 <p>Parse a GBFS <code>geofencing_zones</code> JSON response into a GeoDataFrame. Flattens nested rules to separate columns and reprojects to EPSG:2193.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
-<li><code>json_file</code> : dict, optional — parsed GBFS JSON. If <code>None</code>, the function requests the Flamingo GBFS endpoint.</li>
+<li><code>json_file</code> : <code>dict</code>, optional - parsed GBFS JSON payload. If <code>None</code>, the default Flamingo GBFS endpoint is used.</li>
 </ul>
-<p><strong>Returns:</strong> - GeoDataFrame: one row per zone with <code>name</code>, <code>ride_start_allowed</code>, <code>ride_end_allowed</code>, <code>ride_through_allowed</code>, <code>maximum_speed_kph</code>, and <code>geometry</code> in EPSG:2193.</p>
+<p><strong>Returns:</strong> - <code>GeoDataFrame</code> - one row per zone with <code>name</code>, <code>ride_start_allowed</code>, <code>ride_end_allowed</code>, <code>ride_through_allowed</code>, <code>maximum_speed_kph</code>, and <code>geometry</code>.</p>
+<p><strong>Example:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> flamingo_escooter <span class="im">import</span> load_geofence</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>zones <span class="op">=</span> load_geofence()</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(zones.head())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="load_transit_stations" class="level2">
-<h2 class="anchored" data-anchor-id="load_transit_stations"><code>load_transit_stations()</code></h2>
-<p>Load bundled Auckland public transport stations GeoPackage and return as EPSG:2193.</p>
+<section id="load_transit_stations" class="level3">
+<h3 class="anchored" data-anchor-id="load_transit_stations"><code>load_transit_stations()</code></h3>
+<p>Load bundled Auckland public transport station locations.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
 <li>None.</li>
 </ul>
-<p><strong>Returns:</strong> - GeoDataFrame: bus and train station locations in EPSG:2193.</p>
+<p><strong>Returns:</strong> - <code>GeoDataFrame</code> - transit station locations in EPSG:2193.</p>
+<p><strong>Example:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> flamingo_escooter <span class="im">import</span> load_transit_stations</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>stops <span class="op">=</span> load_transit_stations()</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(stops.head())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="od_flowstrips_gdf-zones_gdf" class="level2">
-<h2 class="anchored" data-anchor-id="od_flowstrips_gdf-zones_gdf"><code>od_flows(trips_gdf, zones_gdf)</code></h2>
-<p>Aggregate trips into origin-destination by spatially joining trip start/end points to provided zone boundaries.</p>
+</section>
+<section id="analysis-api" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-api">Analysis API</h2>
+<section id="od_flowstrips_gdf-zones_gdf" class="level3">
+<h3 class="anchored" data-anchor-id="od_flowstrips_gdf-zones_gdf"><code>od_flows(trips_gdf, zones_gdf)</code></h3>
+<p>Assign origin and destination zones to trips through spatial joins.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
-<li><p><code>trips_gdf</code> : GeoDataFrame — must contain <code>start_point</code> and <code>end_point</code> in EPSG:2193.</p></li>
-<li><p><code>zones_gdf</code> : GeoDataFrame — zone geometries in EPSG:2193; the zone name column is inferred.</p></li>
+<li><p><code>trips_gdf</code> : <code>GeoDataFrame</code> - must contain <code>start_point</code> and <code>end_point</code> in EPSG:2193.</p></li>
+<li><p><code>zones_gdf</code> : <code>GeoDataFrame</code> - zone geometries in EPSG:2193.</p></li>
 </ul>
-<p><strong>Returns:</strong> - GeoDataFrame: input trips with added <code>origin</code> and <code>destination</code> columns.</p>
+<p><strong>Returns:</strong> - <code>GeoDataFrame</code> - trips with added <code>origin</code> and <code>destination</code> columns.</p>
 </section>
-<section id="geofence_violationstrips_gdf-no_park_gdf-location_typeend" class="level2">
-<h2 class="anchored" data-anchor-id="geofence_violationstrips_gdf-no_park_gdf-location_typeend"><code>geofence_violations(trips_gdf, no_park_gdf, location_type='end')</code></h2>
-<p>Flag trips that start or end inside a no-parking geofence zone. Adds <code>is_violation</code> and <code>violated_area</code> to the returned GeoDataFrame.</p>
+<section id="geofence_violationstrips_gdf-no_park_gdf-location_typeend" class="level3">
+<h3 class="anchored" data-anchor-id="geofence_violationstrips_gdf-no_park_gdf-location_typeend"><code>geofence_violations(trips_gdf, no_park_gdf, location_type='end')</code></h3>
+<p>Flag trips that start or end inside a no-parking geofence zone.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
-<li><p><code>trips_gdf</code> : GeoDataFrame — must have <code>start_point</code> and <code>end_point</code> in EPSG:2193.</p></li>
-<li><p><code>no_park_gdf</code> : GeoDataFrame — output of <code>load_geofence()</code>; must have <code>name</code> and <code>ride_end_allowed</code>.</p></li>
-<li><p><code>location_type</code> : str — <code>'end'</code> (default) or <code>'start'</code>.</p></li>
+<li><p><code>trips_gdf</code> : <code>GeoDataFrame</code> - trips with <code>start_point</code> and <code>end_point</code>.</p></li>
+<li><p><code>no_park_gdf</code> : <code>GeoDataFrame</code> - output of <code>load_geofence()</code>.</p></li>
+<li><p><code>location_type</code> : <code>str</code>, optional - <code>'end'</code> (default) or <code>'start'</code>.</p></li>
 </ul>
-<p><strong>Returns:</strong> - GeoDataFrame: trips with <code>is_violation</code> (bool) and <code>violated_area</code> (str or <code>None</code>).</p>
+<p><strong>Returns:</strong> - <code>GeoDataFrame</code> - trips enriched with <code>is_violation</code> and <code>violated_area</code>.</p>
+<p><strong>Example:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> flamingo_escooter <span class="im">import</span> load_trips, load_geofence, geofence_violations</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>trips <span class="op">=</span> load_trips()</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>zones <span class="op">=</span> load_geofence()</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>violations <span class="op">=</span> geofence_violations(trips, zones)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(violations[violations[<span class="st">'is_violation'</span>]].shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="violations_table_widetrips_gdf" class="level2">
-<h2 class="anchored" data-anchor-id="violations_table_widetrips_gdf"><code>violations_table_wide(trips_gdf)</code></h2>
-<p>Aggregate trip-level violations into a zone-level summary table.</p>
+<section id="violations_table_widetrips_gdf" class="level3">
+<h3 class="anchored" data-anchor-id="violations_table_widetrips_gdf"><code>violations_table_wide(trips_gdf)</code></h3>
+<p>Summarise geofence violations in wide format.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
-<li><code>trips_gdf</code> : GeoDataFrame — output of <code>geofence_violations()</code>.</li>
+<li><code>trips_gdf</code> : <code>GeoDataFrame</code> - output of <code>geofence_violations()</code>.</li>
 </ul>
-<p><strong>Returns:</strong> - DataFrame: wide-format summary with columns like <code>violated_area</code> and <code>total_violations</code>.</p>
+<p><strong>Returns:</strong> - <code>DataFrame</code> - zone-level summary with <code>violated_area</code> and <code>total_violations</code>.</p>
 </section>
-<section id="transit_proximitytrips_gdf-transit_gdf-distance10" class="level2">
-<h2 class="anchored" data-anchor-id="transit_proximitytrips_gdf-transit_gdf-distance10"><code>transit_proximity(trips_gdf, transit_gdf, distance=10)</code></h2>
-<p>Compute nearest transit stop distances for trip origins and destinations, and flag whether they are within the supplied threshold.</p>
+<section id="transit_proximitytrips_gdf-transit_gdf-distance10" class="level3">
+<h3 class="anchored" data-anchor-id="transit_proximitytrips_gdf-transit_gdf-distance10"><code>transit_proximity(trips_gdf, transit_gdf, distance=10)</code></h3>
+<p>Compute nearest transit stop distances for trip origins and destinations, and flag proximity.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
-<li><p><code>trips_gdf</code> : GeoDataFrame — must have <code>start_point</code> and <code>end_point</code> in EPSG:2193.</p></li>
-<li><p><code>transit_gdf</code> : GeoDataFrame — transit stop locations in EPSG:2193.</p></li>
-<li><p><code>distance</code> : int, optional — proximity threshold in metres (default: 10).</p></li>
+<li><p><code>trips_gdf</code> : <code>GeoDataFrame</code> - must have <code>start_point</code> and <code>end_point</code> in EPSG:2193.</p></li>
+<li><p><code>transit_gdf</code> : <code>GeoDataFrame</code> - transit stop locations in EPSG:2193.</p></li>
+<li><p><code>distance</code> : <code>int</code>, optional - proximity threshold in metres. Default: <code>10</code>.</p></li>
 </ul>
-<p><strong>Returns:</strong> - GeoDataFrame: trips with <code>start_distance_to_transit_m</code>, <code>end_distance_to_transit_m</code>, <code>start_near_transit</code>, <code>end_near_transit</code>.</p>
+<p><strong>Returns:</strong> - <code>GeoDataFrame</code> - trips with <code>start_distance_to_transit_m</code>, <code>end_distance_to_transit_m</code>, <code>start_near_transit</code>, and <code>end_near_transit</code>.</p>
+<p><strong>Example:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> flamingo_escooter <span class="im">import</span> load_trips, load_transit_stations, transit_proximity</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>trips <span class="op">=</span> load_trips()</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>stops <span class="op">=</span> load_transit_stations()</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>proximity <span class="op">=</span> transit_proximity(trips, stops, distance<span class="op">=</span><span class="dv">20</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(proximity[[<span class="st">'start_near_transit'</span>, <span class="st">'end_near_transit'</span>]].<span class="bu">sum</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="path_heatmaptrips" class="level2">
-<h2 class="anchored" data-anchor-id="path_heatmaptrips"><code>path_heatmap(trips)</code></h2>
-<p>Render a Folium heatmap of trip paths. Decodes <code>encodedPolyline</code> values and plots decoded points.</p>
+</section>
+<section id="visualisation-api" class="level2">
+<h2 class="anchored" data-anchor-id="visualisation-api">Visualisation API</h2>
+<section id="path_heatmaptrips_gdf" class="level3">
+<h3 class="anchored" data-anchor-id="path_heatmaptrips_gdf"><code>path_heatmap(trips_gdf)</code></h3>
+<p>Render a Folium heatmap of all scooter routes.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
-<li><code>trips</code> : GeoDataFrame — must have an <code>encodedPolyline</code> column.</li>
+<li><code>trips_gdf</code> : <code>GeoDataFrame</code> - must include <code>encodedPolyline</code>.</li>
 </ul>
-<p><strong>Returns:</strong> - <code>folium.Map</code> object containing a heatmap layer.</p>
+<p><strong>Returns:</strong> - <code>folium.Map</code> - heatmap of decoded trip path points.</p>
+<p><strong>Example:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> flamingo_escooter <span class="im">import</span> load_trips, path_heatmap</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>trips <span class="op">=</span> load_trips()</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>map_obj <span class="op">=</span> path_heatmap(trips)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>map_obj.save(<span class="st">'path_heatmap.html'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="violation_heatmaptrips_gdf-location_typeend" class="level2">
-<h2 class="anchored" data-anchor-id="violation_heatmaptrips_gdf-location_typeend"><code>violation_heatmap(trips_gdf, location_type='end')</code></h2>
-<p>Render a Folium heatmap of geofence violation locations filtered to <code>is_violation == True</code>.</p>
+<section id="violation_heatmaptrips_gdf-location_typeend" class="level3">
+<h3 class="anchored" data-anchor-id="violation_heatmaptrips_gdf-location_typeend"><code>violation_heatmap(trips_gdf, location_type='end')</code></h3>
+<p>Render a Folium heatmap of geofence violation locations.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
-<li><p><code>trips_gdf</code> : GeoDataFrame — must have <code>is_violation</code> and <code>start_point</code>/<code>end_point</code> in EPSG:2193.</p></li>
-<li><p><code>location_type</code> : str — <code>'end'</code> (default) or <code>'start'</code>.</p></li>
+<li><p><code>trips_gdf</code> : <code>GeoDataFrame</code> - must contain <code>is_violation</code> and endpoint geometries.</p></li>
+<li><p><code>location_type</code> : <code>str</code>, optional - <code>'end'</code> (default) or <code>'start'</code>.</p></li>
 </ul>
-<p><strong>Returns:</strong> - <code>folium.Map</code> object with violation heatmap.</p>
+<p><strong>Returns:</strong> - <code>folium.Map</code> - heatmap of violation endpoints.</p>
 </section>
-<section id="first_and_last_mile_heatmaptrips_gdf-location_typeboth" class="level2">
-<h2 class="anchored" data-anchor-id="first_and_last_mile_heatmaptrips_gdf-location_typeboth"><code>first_and_last_mile_heatmap(trips_gdf, location_type='both')</code></h2>
-<p>Render a Folium heatmap of trips that started or ended near a transit stop.</p>
+<section id="first_and_last_mile_heatmaptrips_gdf-location_typeboth" class="level3">
+<h3 class="anchored" data-anchor-id="first_and_last_mile_heatmaptrips_gdf-location_typeboth"><code>first_and_last_mile_heatmap(trips_gdf, location_type='both')</code></h3>
+<p>Render a Folium heatmap of trips that start or end near transit stops.</p>
 <p><strong>Parameters:</strong></p>
 <ul>
-<li><p><code>trips_gdf</code> : GeoDataFrame — output of <code>transit_proximity()</code>, must have <code>start_near_transit</code> and <code>end_near_transit</code>.</p></li>
-<li><p><code>location_type</code> : str — <code>'start'</code>, <code>'end'</code>, or <code>'both'</code> (default).</p></li>
+<li><p><code>trips_gdf</code> : <code>GeoDataFrame</code> - output of <code>transit_proximity()</code>.</p></li>
+<li><p><code>location_type</code> : <code>str</code>, optional - <code>'start'</code>, <code>'end'</code>, or <code>'both'</code>.</p></li>
 </ul>
-<p><strong>Returns:</strong> - <code>folium.Map</code> object with layers for start/end proximity and a layer control.</p>
+<p><strong>Returns:</strong> - <code>folium.Map</code> - heatmap with start/end transit proximity layers.</p>
+<p><strong>Example:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> flamingo_escooter <span class="im">import</span> load_trips, load_transit_stations, transit_proximity, first_and_last_mile_heatmap</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>trips <span class="op">=</span> load_trips()</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>stops <span class="op">=</span> load_transit_stations()</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>proximity <span class="op">=</span> transit_proximity(trips, stops)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>map_obj <span class="op">=</span> first_and_last_mile_heatmap(proximity, location_type<span class="op">=</span><span class="st">'both'</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>map_obj.save(<span class="st">'transit_heatmap.html'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
 </section>
 </section>
 

@@ -1,0 +1,39 @@
+project:
+  type: website
+  output-dir: .
+
+site-url: https://jhe482-uoa.github.io/flamingo-escooter
+
+website:
+  title: Flamingo E-Scooter
+  description: Documentation for the Flamingo E-Scooter analysis package.
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    base-url: /flamingo-escooter/
+    toc: true
+    toc-location: left
+    toc-depth: 2
+    highlight-style: github
+    code-fold: true
+    page-layout: full
+    include-before-body: sidebar.html
+
+navbar:
+  left:
+    - text: Home
+      href: index.qmd
+    - text: Getting Started
+      href: getting-started.qmd
+    - text: API Reference
+      href: api-reference.qmd
+    - text: Examples
+      href: examples.qmd
+    - text: Visualizations
+      href: visualizations.qmd
+  right:
+    - icon: github
+      href: https://github.com/jhe482-uoa/flamingo-escooter
+      tooltip: GitHub

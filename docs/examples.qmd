@@ -1,0 +1,102 @@
+---
+title: Examples
+format: html
+---
+
+# Examples
+
+This page contains practical workflows for using Flamingo E-Scooter with both bundled demo data and your own datasets.
+
+## Full pipeline example
+
+Run the complete end-to-end analysis in a single call.
+
+```python
+from flamingo_escooter import analyse
+
+trips = analyse()
+print(trips[['origin', 'destination', 'is_violation']].head())
+print(f"Violations found: {trips['is_violation'].sum()}")
+```
+
+This example loads the default sample data, computes OD zones, flags violations, and calculates transit proximity.
+
+## Load and inspect trip data
+
+```python
+from flamingo_escooter import load_trips
+
+trips = load_trips()
+print(trips.columns.tolist())
+print(trips.head())
+```
+
+Use `load_trips(data_file='path/to/trips.csv')` to analyse your own Flamingo trip CSV.
+
+## Geofence and violation detection
+
+```python
+from flamingo_escooter import load_trips, load_geofence, geofence_violations
+
+trips = load_trips()
+zones = load_geofence()
+violations = geofence_violations(trips, zones)
+print(violations.query('is_violation').shape)
+print(violations[['is_violation', 'violated_area']].head())
+```
+
+This example loads the default geofence zones and flags trips ending inside restricted no-parking areas.
+
+## Summarise violations
+
+```python
+from flamingo_escooter import violations_table_wide
+
+summary = violations_table_wide(violations)
+print(summary.head(10))
+```
+
+The summary table is useful for identifying the worst-affected zones and comparing counts.
+
+## Transit proximity analysis
+
+```python
+from flamingo_escooter import load_trips, load_transit_stations, transit_proximity
+
+trips = load_trips()
+stops = load_transit_stations()
+proximity = transit_proximity(trips, stops, distance=20)
+print(proximity[['start_near_transit', 'end_near_transit']].sum())
+```
+
+This shows how many trips begin or end close to public transport stops.
+
+## Save visual outputs
+
+```python
+from flamingo_escooter import path_heatmap, violation_heatmap
+
+trips = load_trips()
+map_route = path_heatmap(trips)
+map_route.save('path_heatmap.html')
+
+map_violations = violation_heatmap(trips)
+map_violations.save('violation_heatmap.html')
+```
+
+## Caching SA boundary downloads
+
+```python
+from flamingo_escooter import load_sa_cached
+
+zones = load_sa_cached()
+print(zones.head())
+```
+
+Use `load_sa_cached()` to avoid repeated downloads from the Stats NZ API.
+
+## More resources
+
+- `demo.ipynb` — interactive notebook walkthrough.
+- `src/flamingo_escooter/data/flamingo_trip_dataset_sample.csv` — sample dataset.
+- `docs/` contains example gallery images you can reproduce with the package.

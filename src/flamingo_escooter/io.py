@@ -18,7 +18,6 @@ WFS_URL = (
 DATA_DIR = Path(__file__).parent / "data"
 
 
-
 def analyse(
     data_file: str | Path | pd.DataFrame | None = None,
     layer_id: int = 123510,
@@ -56,28 +55,15 @@ def analyse(
     """
     from .analysis import od_flows, geofence_violations, transit_proximity
 
-    print("Loading trips...")
     trips = load_trips(data_file)
-
-    print("Loading SA boundaries...")
     zones = load_sa_cached(layer_id)
-
-    print("Loading geofence zones...")
     geofence = load_geofence()
-
-    print("Loading transit stations...")
     transit_stops = load_transit_stations()
 
-    print("Computing OD flows...")
     trips = od_flows(trips, zones)
-
-    print("Computing geofence violations...")
     trips = geofence_violations(trips, geofence)
-
-    print("Computing transit proximity...")
     trips = transit_proximity(trips, transit_stops, distance=transit_distance)
 
-    print("Loading Completed!")
     return trips
 
 
@@ -100,33 +86,45 @@ def load_trips(
         - all original CSV columns (tripId, startTime, endTime, distance, etc.)
     """
     if data_file is None:
-        df = pd.read_csv(resources.files("flamingo_escooter") / "data" / "flamingo_trip_dataset_sample.csv")
+        df = pd.read_csv(
+            resources.files("flamingo_escooter") /
+            "data" /
+            "flamingo_trip_dataset_sample.csv")
     elif isinstance(data_file, pd.DataFrame):
         df = data_file
     else:
         df = pd.read_csv(data_file)
 
-    start_point = gpd.points_from_xy(df.startLongitude, df.startLatitude, crs="EPSG:4326").to_crs("EPSG:2193")
-    end_point = gpd.points_from_xy(df.endLongitude, df.endLatitude, crs="EPSG:4326").to_crs("EPSG:2193")
-    
+    start_point = gpd.points_from_xy(
+        df.startLongitude,
+        df.startLatitude,
+        crs="EPSG:4326").to_crs("EPSG:2193")
+    end_point = gpd.points_from_xy(
+        df.endLongitude,
+        df.endLatitude,
+        crs="EPSG:4326").to_crs("EPSG:2193")
+
     def decode_to_line(encoded_str):
         try:
             coords = polyline.decode(encoded_str)
             flipped_coords = [(c[1], c[0]) for c in coords]
             return LineString(flipped_coords)
-        except Exception: 
+        except Exception:
             return None
-    
+
     df['path_line'] = df['encodedPolyline'].apply(decode_to_line)
-    
-    gdf = gpd.GeoDataFrame(df, geometry='path_line', crs="EPSG:4326").to_crs("EPSG:2193")
+
+    gdf = gpd.GeoDataFrame(
+        df,
+        geometry='path_line',
+        crs="EPSG:4326").to_crs("EPSG:2193")
 
     gdf['start_point'] = start_point
     gdf['end_point'] = end_point
     # gdf_lines.to_file("auckland_rides.gpkg", driver="GPKG")
     return gdf
 
-    
+
 def load_geofence(
     json_file: dict | None = None,
 ) -> gpd.GeoDataFrame:
@@ -157,19 +155,46 @@ def load_geofence(
         If the expected 'data' key is absent from json_file.
     """
     if json_file is None:
-        json_file = pd.read_json("https://data.rideflamingo.com/gbfs/3/auckland/geofencing_zones.json")
+        json_file = pd.read_json(
+            "https://data.rideflamingo.com/gbfs/3/auckland/"
+            "geofencing_zones.json"
+        )
 
     if "data" not in json_file:
-        raise ValueError("Invalid JSON structure: expected 'data.geofencing_zones.features' to be present.")
+        raise ValueError(
+            "Invalid JSON structure: expected "
+            "'data.geofencing_zones.features' to be present."
+        )
     data = json_file["data"]["geofencing_zones"]["features"]
 
-    gdf = gpd.GeoDataFrame.from_features(data, crs="EPSG:4326").to_crs("EPSG:2193")
+    gdf = gpd.GeoDataFrame.from_features(
+        data,
+        crs="EPSG:4326",
+    ).to_crs("EPSG:2193")
 
-    gdf['name'] = gdf['name'].apply(lambda x: x[0]['text'] if isinstance(x, list) else str(x))
-    gdf['ride_start_allowed'] = gdf['rules'].apply(lambda x: str(x[0]['ride_start_allowed']) if "ride_start_allowed" in x[0] else "Unknown")
-    gdf['ride_end_allowed'] = gdf['rules'].apply(lambda x: str(x[0]['ride_end_allowed']) if "ride_end_allowed" in x[0] else "Unknown")
-    gdf['ride_through_allowed'] = gdf['rules'].apply(lambda x: str(x[0]['ride_through_allowed']) if "ride_through_allowed" in x[0] else "Unknown")
-    gdf['maximum_speed_kph'] = gdf['rules'].apply(lambda x: x[0]['maximum_speed_kph'] if "maximum_speed_kph" in x[0] else 25)
+    gdf["name"] = gdf["name"].apply(
+        lambda x: x[0]["text"] if isinstance(x, list) else str(x)
+    )
+    gdf["ride_start_allowed"] = gdf["rules"].apply(
+        lambda x: str(x[0]["ride_start_allowed"])
+        if "ride_start_allowed" in x[0]
+        else "Unknown"
+    )
+    gdf["ride_end_allowed"] = gdf["rules"].apply(
+        lambda x: str(x[0]["ride_end_allowed"])
+        if "ride_end_allowed" in x[0]
+        else "Unknown"
+    )
+    gdf["ride_through_allowed"] = gdf["rules"].apply(
+        lambda x: str(x[0]["ride_through_allowed"])
+        if "ride_through_allowed" in x[0]
+        else "Unknown"
+    )
+    gdf["maximum_speed_kph"] = gdf["rules"].apply(
+        lambda x: x[0]["maximum_speed_kph"]
+        if "maximum_speed_kph" in x[0]
+        else 25
+    )
 
     gdf = gdf.drop(columns=['rules'])
 
@@ -181,7 +206,7 @@ def load_geofence(
 def _get_api_key() -> str:
     load_dotenv()
     key = os.getenv("STATS_NZ_API_KEY")
-  
+
     if key is None:
         raise EnvironmentError(
             "Set STATS_NZ_API_KEY in your environment "
@@ -229,7 +254,7 @@ def load_sa(
         "service": "WFS",
         "version": "2.0.0",
         "request": "GetFeature",
-        "typeNames": f"layer-{layer_id}",       
+        "typeNames": f"layer-{layer_id}",
         "outputFormat": "json",
         "srsName": "EPSG:2193",
         "bbox": "1740000,5900000,1790000,5950000,EPSG:2193",
@@ -251,8 +276,9 @@ def load_sa_cached(
     Download Stats NZ boundaries with local disk caching.
 
     On first call, fetches boundaries via load_sa() and writes a GeoPackage
-    to ~/.cache/flamingo_escooter/{layer_id}_statsnz.gpkg. Subsequent calls read from
-    cache, skipping the network request entirely.
+    to ~/.cache/flamingo_escooter/{layer_id}_statsnz.gpkg.
+    Subsequent calls read from cache, skipping the network request
+    entirely.
 
     Parameters
     ----------
@@ -277,6 +303,7 @@ def load_sa_cached(
     gdf.to_file(cache_file, driver="GPKG")
     return gdf
 
+
 def load_transit_stations() -> gpd.GeoDataFrame:
     """
     Load Auckland public transport stations.
@@ -289,4 +316,3 @@ def load_transit_stations() -> gpd.GeoDataFrame:
     path = DATA_DIR / "akl_transit_station.gpkg"
     stations = gpd.read_file(path)
     return stations.to_crs(2193)
-

@@ -7,17 +7,21 @@ import flamingo_escooter as fe
 def trips():
     return fe.load_trips()
 
+
 @pytest.fixture
 def zones():
     return fe.load_sa_cached()
+
 
 @pytest.fixture
 def geofence():
     return fe.load_geofence()
 
+
 @pytest.fixture
 def trips_with_violations(trips, geofence):
     return fe.geofence_violations(trips, geofence)
+
 
 @pytest.fixture
 def transit():
@@ -27,7 +31,12 @@ def transit():
 def test_load_trips(trips):
     assert len(trips) > 0
     assert trips.crs.to_epsg() == 2193
-    assert all(col in trips.columns for col in ["start_point", "end_point", "encodedPolyline"])
+    assert all(
+        col in trips.columns for col in [
+            "start_point",
+            "end_point",
+            "encodedPolyline"])
+
 
 def test_od_flows(trips, zones):
     od = fe.od_flows(trips, zones)
@@ -35,9 +44,70 @@ def test_od_flows(trips, zones):
     assert od["origin"].notna().all()
     assert len(od) <= len(trips)
 
+
 def test_load_geofence(geofence):
     assert geofence.crs.to_epsg() == 2193
-    assert set(geofence["ride_end_allowed"]).issubset({"True", "False", "Unknown"})
+    assert set(geofence["ride_end_allowed"]).issubset(
+        {"True", "False", "Unknown"})
+
+
+def test_load_geofence_invalid_json_raises():
+    with pytest.raises(ValueError, match="Invalid JSON structure"):
+        fe.load_geofence({"bad": "payload"})
+
+
+def test_get_api_key_raises_when_missing(monkeypatch):
+    import flamingo_escooter.io as fe_io
+
+    monkeypatch.setattr(fe_io, "load_dotenv", lambda: None)
+    monkeypatch.delenv("STATS_NZ_API_KEY", raising=False)
+
+    with pytest.raises(EnvironmentError, match="Set STATS_NZ_API_KEY"):
+        fe_io._get_api_key()
+
+
+def test_load_sa_raises_without_api_key(monkeypatch):
+    import flamingo_escooter.io as fe_io
+
+    monkeypatch.setattr(fe_io, "load_dotenv", lambda: None)
+    monkeypatch.delenv("STATS_NZ_API_KEY", raising=False)
+
+    with pytest.raises(EnvironmentError):
+        fe_io.load_sa()
+
+
+def test_load_transit_stations():
+    stations = fe.load_transit_stations()
+    assert stations.crs.to_epsg() == 2193
+    assert "geometry" in stations.columns
+
+
+def test_load_sa_cached_reads_existing_cache(tmp_path, monkeypatch):
+    import geopandas as gpd
+    from shapely.geometry import Polygon
+    import flamingo_escooter.io as fe_io
+
+    dummy_sa = gpd.GeoDataFrame(
+        {"area_id": [1]},
+        geometry=[Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])],
+        crs="EPSG:2193",
+    )
+    cache_file = tmp_path / "123510_statsnz.gpkg"
+    dummy_sa.to_file(cache_file, driver="GPKG")
+
+    monkeypatch.setattr(fe_io, "CACHE_DIR", tmp_path)
+
+    result = fe.load_sa_cached()
+    assert len(result) == 1
+
+
+def test_first_and_last_mile_heatmap(trips, transit):
+    result = fe.first_and_last_mile_heatmap(
+        fe.transit_proximity(trips, transit, distance=100),
+        location_type="both",
+    )
+    assert isinstance(result, folium.Map)
+
 
 def test_geofence_violations(trips, trips_with_violations):
     # all rows preserved, new flag columns added
@@ -47,17 +117,21 @@ def test_geofence_violations(trips, trips_with_violations):
     assert trips_with_violations["is_violation"].dtype == bool
     assert trips_with_violations["is_violation"].sum() > 0
 
+
 @pytest.mark.parametrize("location_type", ["middle", "", "END", 123])
 def test_invalid_location_type_raises(trips, geofence, location_type):
     with pytest.raises((ValueError, TypeError)):
         fe.geofence_violations(trips, geofence, location_type=location_type)
+
 
 def test_violations_table_wide(trips_with_violations):
     table = fe.violations_table_wide(trips_with_violations)
     assert "violated_area" in table.columns
     assert "total_violations" in table.columns
     assert table["total_violations"].is_monotonic_decreasing
-    assert table["total_violations"].sum() == trips_with_violations["is_violation"].sum()
+    assert table["total_violations"].sum(
+    ) == trips_with_violations["is_violation"].sum()
+
 
 def test_transit_proximity(trips, transit):
     result = fe.transit_proximity(trips, transit)
@@ -65,11 +139,14 @@ def test_transit_proximity(trips, transit):
     assert result["start_near_transit"].dtype == bool
     assert (result["start_distance_to_transit_m"] >= 0).all()
 
+
 def test_path_heatmap(trips):
     assert isinstance(fe.path_heatmap(trips), folium.Map)
 
+
 def test_violation_heatmap(trips_with_violations):
     assert isinstance(fe.violation_heatmap(trips_with_violations), folium.Map)
+
 
 def test_load_sa_cached_writes_cache(tmp_path, monkeypatch):
     import geopandas as gpd
@@ -83,7 +160,11 @@ def test_load_sa_cached_writes_cache(tmp_path, monkeypatch):
         geometry=[Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])],
         crs="EPSG:2193",
     )
-    monkeypatch.setattr(fe_io, "load_sa", lambda layer_id=123510, api_key=None: dummy_sa)
+    monkeypatch.setattr(
+        fe_io,
+        "load_sa",
+        lambda layer_id=123510,
+        api_key=None: dummy_sa)
 
     fe.load_sa_cached()
     assert any(tmp_path.iterdir())

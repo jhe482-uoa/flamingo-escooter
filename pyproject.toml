@@ -14,10 +14,6 @@ authors = [
     { name = "Georgia Short", email = "gsho521@aucklanduni.ac.nz" },
     { name = "Hans Setiawan", email = "hset686@aucklanduni.ac.nz" },
 ]
-members = [
-    { name = "Dr. Hyesop Shin", email = "hyesop.shin@auckland.ac.nz" },
-    { name = "Nick Hyland", email = "nick@flamingo.co.nz" },
-]
 keywords = [
     "escooter",
     "auckland",
@@ -47,14 +43,29 @@ dependencies = [
     "polyline>=2.0.4",
     "python-dotenv>=1.2.2",
     "folium>=0.16.0",
+]
+
+[project.optional-dependencies]
+dev = [
     "pytest>=9.0.3",
+    "coverage>=7.0.0",
+    "pycodestyle>=2.14.0",
+    "ruff>=0.15.0",
 ]
 
 [project.urls]
 Homepage = "https://github.com/jhe482-uoa/flamingo-escooter"
-Documentation = "https://github.com/jhe482-uoa/flamingo-escooter#readme"
+Documentation = "https://github.com/jhe482-uoa/flamingo-escooter/tree/main/docs"
 "API Documentation" = "https://github.com/jhe482-uoa/flamingo-escooter/blob/main/api_reference.qmd"
 "Bug Tracker" = "https://github.com/jhe482-uoa/flamingo-escooter/issues"
+
+[tool.coverage.run]
+source = ["flamingo_escooter"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 70
 
 [tool.hatch.build.targets.sdist]
 include = [
@@ -64,7 +75,7 @@ include = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/flamingo_escooter"]
+packages = ["flamingo_escooter"]
 
 [[tool.uv.index]]
 name = "pypi"

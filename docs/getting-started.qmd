@@ -1,0 +1,81 @@
+---
+title: Getting Started
+format: html
+---
+
+# Getting Started
+
+Get up and running with Flamingo E-Scooter by installing the package, loading data, and running the first analysis.
+
+## Install from PyPI
+
+```bash
+pip install flamingo-escooter
+```
+
+## Install from source
+
+```bash
+git clone https://github.com/jhe482-uoa/flamingo-escooter.git
+cd flamingo-escooter
+pip install -e .
+```
+
+## Optional UV-based setup
+
+If you use `uv` for environment management, the repository supports the `uv` workflow:
+
+```bash
+uv sync
+uv build
+```
+
+This installs dependencies and configures the environment for development and testing.
+
+## Load the bundled sample dataset
+
+```python
+from flamingo_escooter import load_trips
+
+trips = load_trips()
+print(trips.shape)
+print(trips.columns)
+```
+
+The package ships with demo data so you can explore results without needing your own CSV file.
+
+## First analysis example
+
+```python
+from flamingo_escooter import analyse
+
+trips = analyse()
+print(trips[['origin', 'destination', 'is_violation']].head())
+print(f"Total violations: {trips['is_violation'].sum()}")
+```
+
+## Loading geofence zones and checking violations
+
+```python
+from flamingo_escooter import load_trips, load_geofence, geofence_violations
+
+trips = load_trips()
+zones = load_geofence()
+violations = geofence_violations(trips, zones)
+print(violations[violations['is_violation']].head())
+```
+
+## Recommended workflow
+
+1. Install the package.
+2. Load your trip data with `load_trips(data_file=...)` or use the bundled demo data.
+3. Load geofence zones with `load_geofence()`.
+4. Run `geofence_violations()` and optionally `od_flows()`.
+5. Compute transit proximity with `transit_proximity()`.
+6. Visualise results using `path_heatmap()` and `violation_heatmap()`.
+
+## Notes
+
+- The package is designed for Auckland CBD analysis and uses NZTM projection (EPSG:2193).
+- Demo outputs are included in the repository as PNG images.
+- `demo.ipynb` is a useful reference for interactive exploration.

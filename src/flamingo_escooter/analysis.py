@@ -29,13 +29,13 @@ def od_flows(
         - destination: name of the zone containing the trip's end point
     """
     gdf = trips_gdf.copy()
-    column_name = zones_gdf.columns[1] 
+    column_name = zones_gdf.columns[1]
 
-    gdf.set_geometry('end_point', crs="EPSG:2193",inplace=True)
+    gdf.set_geometry('end_point', crs="EPSG:2193", inplace=True)
     gdf = gpd.sjoin(
         gdf,
-        zones_gdf[[column_name, 'geometry']], 
-        how='inner', 
+        zones_gdf[[column_name, 'geometry']],
+        how='inner',
         predicate='within'
     )
     gdf.rename(columns={column_name: 'destination'}, inplace=True)
@@ -43,15 +43,16 @@ def od_flows(
     gdf.set_geometry('start_point', crs="EPSG:2193", inplace=True)
 
     gdf = gpd.sjoin(
-        gdf, 
-        zones_gdf[[column_name, 'geometry']], 
-        how='inner', 
+        gdf,
+        zones_gdf[[column_name, 'geometry']],
+        how='inner',
         predicate='within'
     )
     gdf.rename(columns={column_name: 'origin'}, inplace=True)
     gdf.drop(columns=['index_right'], inplace=True)
 
     return gdf
+
 
 def geofence_violations(
     trips_gdf: gpd.GeoDataFrame,
@@ -92,7 +93,8 @@ def geofence_violations(
         raise ValueError(f"{point_col} not found in trips_gdf columns")
 
     gdf = trips_gdf.copy().set_geometry(point_col, crs="EPSG:2193")
-    no_park = no_park_gdf[no_park_gdf["ride_end_allowed"] == "False"].to_crs("EPSG:2193")
+    no_park = no_park_gdf[no_park_gdf["ride_end_allowed"]
+                          == "False"].to_crs("EPSG:2193")
 
     joined = gpd.sjoin(
         gdf,
@@ -106,7 +108,8 @@ def geofence_violations(
 
     trips_gdf = trips_gdf.copy()
     trips_gdf["is_violation"] = joined["name"].notna()
-    trips_gdf["violated_area"] = joined["name"].where(joined["name"].notna(), None)
+    trips_gdf["violated_area"] = joined["name"].where(
+        joined["name"].notna(), None)
 
     return trips_gdf
 
@@ -118,19 +121,19 @@ def violations_table_wide(
     Pivot violation records into a wide-format summary table.
 
     Aggregates trip-level violations into a zone-level summary with one row
-    per violated zone and columns for total violations, unique trips, and
-    share of all violations.
+    per violated zone and columns for total violations.
 
     Parameters
     ----------
-    violations_gdf : GeoDataFrame
-        Output of geofence_violations(), must have a 'area' column.
+    trips_gdf : GeoDataFrame
+        Output of geofence_violations(), must have 'is_violation' and
+        'violated_area' columns.
 
     Returns
     -------
-    DataFrame
+    GeoDataFrame
         Wide-format summary with columns:
-        - area: name of the no-parking zone
+        - violated_area: name of the no-parking zone
         - total_violations: number of trips ending in that zone
     """
     return (
@@ -141,6 +144,7 @@ def violations_table_wide(
         .sort_values("total_violations", ascending=False)
         .reset_index(drop=True)
     )
+
 
 def transit_proximity(
     trips_gdf: gpd.GeoDataFrame,
@@ -168,8 +172,10 @@ def transit_proximity(
     -------
     GeoDataFrame
         trips_gdf with four additional columns:
-        - start_distance_to_transit_m: distance from trip origin to nearest stop
-        - end_distance_to_transit_m: distance from trip destination to nearest stop
+        - start_distance_to_transit_m: distance from trip origin to nearest
+          stop
+        - end_distance_to_transit_m: distance from trip destination to nearest
+          stop
         - start_near_transit: True if origin is within distance threshold
         - end_near_transit: True if destination is within distance threshold
     """
@@ -194,9 +200,19 @@ def transit_proximity(
         )
         return nearest[distance_col]
 
-    trips["start_distance_to_transit_m"] = nearest_distance("start_point", "start_distance_to_transit_m")
-    trips["end_distance_to_transit_m"] = nearest_distance("end_point", "end_distance_to_transit_m")
-    trips["start_near_transit"] = trips["start_distance_to_transit_m"] <= distance
-    trips["end_near_transit"] = trips["end_distance_to_transit_m"] <= distance
+    trips["start_distance_to_transit_m"] = nearest_distance(
+        "start_point",
+        "start_distance_to_transit_m",
+    )
+    trips["end_distance_to_transit_m"] = nearest_distance(
+        "end_point",
+        "end_distance_to_transit_m",
+    )
+    trips["start_near_transit"] = (
+        trips["start_distance_to_transit_m"] <= distance
+    )
+    trips["end_near_transit"] = (
+        trips["end_distance_to_transit_m"] <= distance
+    )
 
     return trips.drop(columns="trip_index")

@@ -1,0 +1,151 @@
+---
+title: API Reference
+format: html
+---
+
+# API Reference
+
+This page documents the public API for the `flamingo_escooter` package. Use these functions to load trip data, enrich it with spatial context, detect violations, and generate visual outputs.
+
+## Master function
+
+### `analyse(data_file=None, layer_id=123510, transit_distance=10)`
+
+Run the full Flamingo e-scooter analysis pipeline in one call.
+
+- **Description:** Loads trips, fetches SA boundaries, computes origin and destination zones, flags geofence violations, and calculates transit proximity.
+- **Parameters:**
+  - `data_file` : `str | Path | DataFrame`, optional — path to a trip CSV file or a preloaded DataFrame.
+  - `layer_id` : `int`, optional — Stats NZ WFS layer ID for statistical areas. Default: `123510`.
+  - `transit_distance` : `int`, optional — distance in metres used to flag trips near transit stops. Default: `10`.
+- **Returns:** `GeoDataFrame`
+
+```python
+from flamingo_escooter import analyse
+
+result = analyse()
+print(result[['origin', 'destination', 'is_violation']].head())
+```
+
+## IO API
+
+### `load_trips(data_file=None)`
+
+Load Flamingo trip data, parse timestamps, decode encoded polylines into `LineString` geometries, and project start/end points to NZTM (EPSG:2193).
+
+- **Parameters:**
+  - `data_file` : `str | Path | DataFrame`, optional — CSV path or DataFrame. If `None`, the bundled sample dataset is used.
+- **Returns:** `GeoDataFrame`
+
+### `load_sa(layer_id=123510, api_key=None)`
+
+Download Stats NZ statistical area boundaries via WFS and return them in EPSG:2193.
+
+- **Parameters:**
+  - `layer_id` : `int`, optional — Stats NZ layer ID.
+  - `api_key` : `str`, optional — API key for Stats NZ. If `None`, the function reads `STATS_NZ_API_KEY` from the environment or `.env`.
+- **Returns:** `GeoDataFrame`
+
+### `load_sa_cached(layer_id=123510, api_key=None)`
+
+Load SA boundaries with local disk caching to avoid repeated network downloads.
+
+- **Returns:** `GeoDataFrame`
+
+### `load_geofence(json_file=None)`
+
+Parse Flamingo GBFS geofence zones into a GeoDataFrame.
+
+- **Parameters:**
+  - `json_file` : `dict`, optional — parsed GBFS JSON payload. If `None`, the package fetches the default Flamingo endpoint.
+- **Returns:** `GeoDataFrame`
+
+### `load_transit_stations()`
+
+Load bundled Auckland bus and train stops and return them in EPSG:2193.
+
+- **Returns:** `GeoDataFrame`
+
+## Analysis API
+
+### `od_flows(trips_gdf, zones_gdf)`
+
+Spatially join trip start and end points to statistical zones to compute origin and destination labels.
+
+- **Parameters:**
+  - `trips_gdf` : `GeoDataFrame` with `start_point` and `end_point` geometries.
+  - `zones_gdf` : `GeoDataFrame` of zone boundaries in EPSG:2193.
+- **Returns:** `GeoDataFrame`
+
+### `geofence_violations(trips_gdf, no_park_gdf, location_type='end')`
+
+Flag trips whose endpoint (or start point) lies inside a no-parking geofence zone.
+
+- **Parameters:**
+  - `trips_gdf` : `GeoDataFrame` with trip geometries.
+  - `no_park_gdf` : `GeoDataFrame` of geofence zones.
+  - `location_type` : `str`, optional — `'end'` or `'start'`. Default: `'end'`.
+- **Returns:** `GeoDataFrame`
+
+### `violations_table_wide(trips_gdf)`
+
+Summarise geofence violations by zone in wide format.
+
+- **Parameters:**
+  - `trips_gdf` : `GeoDataFrame` from `geofence_violations()`.
+- **Returns:** `DataFrame`
+
+### `transit_proximity(trips_gdf, transit_gdf, distance=10)`
+
+Compute the nearest transit stop distance for each trip origin and destination and flag whether they are within the given threshold.
+
+- **Parameters:**
+  - `trips_gdf` : `GeoDataFrame` with `start_point` and `end_point`.
+  - `transit_gdf` : `GeoDataFrame` of transit stops.
+  - `distance` : `int`, optional — distance threshold in metres. Default: `10`.
+- **Returns:** `GeoDataFrame`
+
+## Visualisation API
+
+### `path_heatmap(trips_gdf)`
+
+Create an interactive Folium heatmap showing route density from decoded trip polylines.
+
+- **Parameters:**
+  - `trips_gdf` : `GeoDataFrame` containing encoded or decoded route geometry.
+- **Returns:** `folium.Map`
+
+### `violation_heatmap(trips_gdf, location_type='end')`
+
+Create an interactive heatmap of geofence or parking violation locations.
+
+- **Parameters:**
+  - `trips_gdf` : `GeoDataFrame` from `geofence_violations()`.
+  - `location_type` : `str`, optional — `'end'` or `'start'`.
+- **Returns:** `folium.Map`
+
+### `first_and_last_mile_heatmap(trips_gdf, location_type='both')`
+
+Render a heatmap of trip endpoints near transit stops for first- and last-mile analysis.
+
+- **Parameters:**
+  - `trips_gdf` : `GeoDataFrame` with transit proximity flags.
+  - `location_type` : `str`, optional — `'start'`, `'end'`, or `'both'`.
+- **Returns:** `folium.Map`
+
+## Example usage
+
+```python
+from flamingo_escooter import load_trips, load_geofence, geofence_violations, path_heatmap
+
+trips = load_trips()
+zones = load_geofence()
+violations = geofence_violations(trips, zones)
+map_obj = path_heatmap(trips)
+map_obj.save('path_heatmap.html')
+```
+
+## Notes
+
+- Use `load_sa_cached()` when you want to reuse downloaded statistical area boundaries.
+- The package is intended to support Auckland CBD transport and parking analysis.
