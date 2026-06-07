@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.27">
+<meta name="generator" content="quarto-1.9.28">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -73,7 +73,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-67e1af7abdb15bd5a2919d83736f6706.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1d541e707deb911ee702dcbe28eecf08.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-09bcd2438ddda8166a810b4ec224e0a2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
@@ -121,12 +121,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#what-this-package-does" id="toc-what-this-package-does" class="nav-link active" data-scroll-target="#what-this-package-does">What this package does</a></li>
+  <li><a href="#flamingo-e-scooter" id="toc-flamingo-e-scooter" class="nav-link active" data-scroll-target="#flamingo-e-scooter">Flamingo E-Scooter</a>
+  <ul class="collapse">
+  <li><a href="#what-this-package-does" id="toc-what-this-package-does" class="nav-link" data-scroll-target="#what-this-package-does">What this package does</a></li>
   <li><a href="#documentation-pages" id="toc-documentation-pages" class="nav-link" data-scroll-target="#documentation-pages">Documentation pages</a></li>
   <li><a href="#quick-start" id="toc-quick-start" class="nav-link" data-scroll-target="#quick-start">Quick start</a></li>
   <li><a href="#why-use-flamingo-e-scooter" id="toc-why-use-flamingo-e-scooter" class="nav-link" data-scroll-target="#why-use-flamingo-e-scooter">Why use Flamingo E-Scooter?</a></li>
   <li><a href="#included-resources" id="toc-included-resources" class="nav-link" data-scroll-target="#included-resources">Included resources</a></li>
   <li><a href="#sample-outputs" id="toc-sample-outputs" class="nav-link" data-scroll-target="#sample-outputs">Sample outputs</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -166,16 +169,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Flamingo E-Scooter is a Python package for analysing Flamingo scooter movement patterns in the Auckland CBD. It is built to help transport planners, local authorities, and data analysts understand route flows, detect geofence and parking violations, and evaluate connections to public transport.</p>
+<section id="flamingo-e-scooter" class="level1">
+<h1>Flamingo E-Scooter</h1>
+<p>Flamingo E-Scooter is a Python package for analysing Flamingo e-scooter movement patterns in the Auckland CBD. Designed for Flamingo scooter data, it provides tools to identify route flows, detect parking violations, and assess connections to public transport. The package supports Auckland Council, Auckland Transport, and Flamingo Scooters in understanding scooter usage, informing infrastructure planning, improving the management of e-scooter parking, and identifying opportunities to better integrate micro-mobility with the wider transport network.</p>
 <section id="what-this-package-does" class="level2">
 <h2 class="anchored" data-anchor-id="what-this-package-does">What this package does</h2>
 <ul>
-<li>Load, clean, and enrich Flamingo trip datasets.</li>
+<li>Load, clean, and analyse Flamingo trip datasets.</li>
 <li>Decode encoded route polylines into spatial geometries.</li>
 <li>Compute origin-destination flows across Auckland statistical areas.</li>
-<li>Detect parking and geofence violations inside restricted zones.</li>
+<li>Detect parking violations inside restricted zones.</li>
 <li>Measure transit proximity for first- and last-mile analysis.</li>
-<li>Generate interactive visualizations of routes and violation hotspots.</li>
+<li>Generate interactive visualisations of routes and violation hotspots.</li>
 </ul>
 </section>
 <section id="documentation-pages" class="level2">
@@ -193,7 +198,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>trips <span class="op">=</span> analyse()</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(trips[[<span class="st">'origin'</span>, <span class="st">'destination'</span>, <span class="st">'is_violation'</span>]].head())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The <code>analyse()</code> function runs the full pipeline in one call: load trips, fetch SA boundary zones, compute OD flows, detect violations, and calculate transit proximity.</p>
+<p>The <code>analyse()</code> function runs the full pipeline in one call: load trips, fetch SA boundary zones, compute OD flows, detect violations, and calculating trips potentially connecting to public transport.</p>
 </section>
 <section id="why-use-flamingo-e-scooter" class="level2">
 <h2 class="anchored" data-anchor-id="why-use-flamingo-e-scooter">Why use Flamingo E-Scooter?</h2>
@@ -234,6 +239,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
