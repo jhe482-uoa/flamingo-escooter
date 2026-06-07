@@ -38,17 +38,10 @@ fe.path_heatmap(trips) # See Path Heatmap image for expected output
 fe.violation_heatmap(trips) # See Violation Heatmap image for expected output
 
 violation_df_wide = fe.violations_table_wide(trips)
-violation_df_wide # See Violation table in wide format
+violation_df_wide # See Violation table in wide format for expected output
 
 fe.first_and_last_mile_heatmap(trips) # See First and Last Mile Heatmap for expected output
 ```
-
-Expected output:
-- A shape tuple for the loaded trips, e.g. `(N, M)`
-- A columns index containing `start_point`, `end_point`, and `path_line`
-- An origin/destination pair from the first row after `od_flows()`
-
-Use `fe.analyse()` to run the full pipeline and return an enriched GeoDataFrame.
 
 See `demo.ipynb` for an additional demonstration.
 
