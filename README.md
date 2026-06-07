@@ -1,3 +1,5 @@
+#### Link to full documentation: https://jhe482-uoa.github.io/flamingo-escooter/
+
 This Python package is used for analysing Flamingo e-scooter movement patterns within the Auckland CBD, providing tools to clean trip data and easily identify trips ending in restricted no-parking zones. It is designed to assist Auckland Council, Auckland Transport, and Flamingo Scooters to better understand scooter usage, support infrastructure planning, and improve enforcement of parking restrictions.
 
 ## Features:
@@ -30,13 +32,15 @@ python3 -m pip install -e .[dev]
 ```python
 import flamingo_escooter as fe
 
-trips = fe.load_trips()
-print(trips.shape)
-print(trips.columns)
+trips = fe.analyse()
+fe.path_heatmap(trips) # See Path Heatmap image for expected output
 
-zones = fe.load_sa_cached()
-od = fe.od_flows(trips, zones)
-print(od.loc[0, ["origin", "destination"]])
+fe.violation_heatmap(trips) # See Violation Heatmap image for expected output
+
+violation_df_wide = fe.violations_table_wide(trips)
+violation_df_wide # See Violation table in wide format
+
+fe.first_and_last_mile_heatmap(trips) # See First and Last Mile Heatmap for expected output
 ```
 
 Expected output:
