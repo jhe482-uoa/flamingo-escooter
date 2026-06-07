@@ -1,6 +1,6 @@
 body {
-  background: #f4f6fb;
-  color: #1f2937;
+  background: #fff7fb;
+  color: #3f3f46;
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
@@ -10,30 +10,31 @@ body {
 }
 
 h1, h2, h3, h4 {
-  color: #111827;
+  color: #c2185b;
 }
 
 a {
-  color: #0067b8;
+  color: #e60073;
 }
 
 a:hover {
-  color: #004a82;
+  color: #b30059;
 }
 
 pre, code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
 }
 
 pre {
-  background: rgba(15, 23, 42, 0.06);
+  background: rgba(230, 0, 115, 0.06);
   border-radius: 0.6rem;
   padding: 1rem;
 }
 
 blockquote {
-  border-left: 4px solid #2563eb;
-  background: rgba(37, 99, 235, 0.08);
+  border-left: 4px solid #e60073;
+  background: rgba(230, 0, 115, 0.08);
   padding: 1rem 1.25rem;
 }
 
@@ -50,16 +51,15 @@ img {
   width: 250px;
   z-index: 1000;
   background: #ffffff;
-  border-right: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 2px 0 20px rgba(15, 23, 42, 0.06);
+  border-right: 1px solid rgba(230, 0, 115, 0.12);
+  box-shadow: 2px 0 20px rgba(230, 0, 115, 0.08);
   padding: 1.25rem 1rem;
 }
 
 .sidebar-inner {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  justify-content: flex-start;
+  gap: 1rem;
 }
 
 .sidebar-title {
@@ -67,7 +67,7 @@ img {
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #0f172a;
+  color: #c2185b;
 }
 
 #site-sidebar nav ul {
@@ -82,7 +82,7 @@ img {
 
 #site-sidebar nav a {
   display: block;
-  color: #1f2937;
+  color: #3f3f46;
   text-decoration: none;
   font-weight: 600;
   transition: color 0.2s ease;
@@ -90,12 +90,12 @@ img {
 
 #site-sidebar nav a:hover,
 #site-sidebar nav a:focus {
-  color: #0f5499;
+  color: #e60073;
 }
 
 #site-sidebar nav a.active,
 #site-sidebar nav a.current {
-  color: #0f5499;
+  color: #e60073;
 }
 
 #quarto-content {
@@ -118,9 +118,42 @@ img {
 
 .navbar .nav-link,
 .navbar .navbar-brand {
-  color: #1f2937;
+  color: #3f3f46;
 }
 
 .navbar .nav-link:hover {
-  color: #004a82;
+  color: #e60073;
+}
+
+/* Inline code */
+code {
+  color: #c2185b;
+}
+
+/* Code blocks background */
+pre {
+  background: #fff0f7;
+  border: 1px solid #ffd6eb;
+}
+
+/* Python keywords */
+.kw {
+  color: #e60073 !important;
+  font-weight: 600;
+}
+
+/* Function names */
+.fu {
+  color: #c2185b !important;
+}
+
+/* Strings */
+.st {
+  color: #2e7d32 !important;
+}
+
+/* Numbers */
+.dv,
+.fl {
+  color: #ef6c00 !important;
 }

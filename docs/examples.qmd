@@ -2,10 +2,9 @@
 title: Examples
 format: html
 ---
-
 This page contains practical workflows for using Flamingo E-Scooter with both bundled demo data and your own datasets.
 
-## Full pipeline example
+### Full pipeline example
 
 Run the complete end-to-end analysis in a single call.
 
@@ -19,7 +18,7 @@ print(f"Violations found: {trips['is_violation'].sum()}")
 
 This example loads the default sample data, computes OD zones, flags violations, and calculates transit proximity.
 
-## Load and inspect trip data
+### Load and inspect trip data
 
 ```python
 from flamingo_escooter import load_trips
@@ -31,7 +30,7 @@ print(trips.head())
 
 Use `load_trips(data_file='path/to/trips.csv')` to analyse your own Flamingo trip CSV.
 
-## Geofence and violation detection
+### Geofence and violation detection
 
 ```python
 from flamingo_escooter import load_trips, load_geofence, geofence_violations
@@ -45,7 +44,7 @@ print(violations[['is_violation', 'violated_area']].head())
 
 This example loads the default geofence zones and flags trips ending inside restricted no-parking areas.
 
-## Summarise violations
+### Summarise violations
 
 ```python
 from flamingo_escooter import violations_table_wide
@@ -56,7 +55,7 @@ print(summary.head(10))
 
 The summary table is useful for identifying the worst-affected zones and comparing counts.
 
-## Transit proximity analysis
+### Transit proximity analysis
 
 ```python
 from flamingo_escooter import load_trips, load_transit_stations, transit_proximity
@@ -69,7 +68,7 @@ print(proximity[['start_near_transit', 'end_near_transit']].sum())
 
 This shows how many trips begin or end close to public transport stops.
 
-## Save visual outputs
+### Save visual outputs
 
 ```python
 from flamingo_escooter import path_heatmap, violation_heatmap
@@ -82,7 +81,7 @@ map_violations = violation_heatmap(trips)
 map_violations.save('violation_heatmap.html')
 ```
 
-## Caching SA boundary downloads
+### Caching SA boundary downloads
 
 ```python
 from flamingo_escooter import load_sa_cached
@@ -93,7 +92,7 @@ print(zones.head())
 
 Use `load_sa_cached()` to avoid repeated downloads from the Stats NZ API.
 
-## More resources
+### More resources
 
 - `demo.ipynb` — interactive notebook walkthrough.
 - `src/flamingo_escooter/data/flamingo_trip_dataset_sample.csv` — sample dataset.

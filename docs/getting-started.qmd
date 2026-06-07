@@ -2,16 +2,15 @@
 title: Getting Started
 format: html
 ---
-
 Get up and running with Flamingo E-Scooter by installing the package, loading data, and running the first analysis.
 
-## Install from PyPI
+### Install from PyPI
 
 ```bash
 pip install flamingo-escooter
 ```
 
-## Install from source
+### Install from source
 
 ```bash
 git clone https://github.com/jhe482-uoa/flamingo-escooter.git
@@ -19,7 +18,7 @@ cd flamingo-escooter
 pip install -e .
 ```
 
-## Optional UV-based setup
+### Optional UV-based setup
 
 If you use `uv` for environment management, the repository supports the `uv` workflow:
 
@@ -30,7 +29,7 @@ uv build
 
 This installs dependencies and configures the environment for development and testing.
 
-## Load the bundled sample dataset
+### Load the bundled sample dataset
 
 ```python
 from flamingo_escooter import load_trips
@@ -42,7 +41,7 @@ print(trips.columns)
 
 The package ships with demo data so you can explore results without needing your own CSV file.
 
-## First analysis example
+### First analysis example
 
 ```python
 from flamingo_escooter import analyse
@@ -52,7 +51,7 @@ print(trips[['origin', 'destination', 'is_violation']].head())
 print(f"Total violations: {trips['is_violation'].sum()}")
 ```
 
-## Loading geofence zones and checking violations
+### Loading geofence zones and checking violations
 
 ```python
 from flamingo_escooter import load_trips, load_geofence, geofence_violations
@@ -63,7 +62,7 @@ violations = geofence_violations(trips, zones)
 print(violations[violations['is_violation']].head())
 ```
 
-## Recommended workflow
+### Recommended workflow
 
 1. Install the package.
 2. Load your trip data with `load_trips(data_file=...)` or use the bundled demo data.
@@ -72,7 +71,7 @@ print(violations[violations['is_violation']].head())
 5. Compute transit proximity with `transit_proximity()`.
 6. Visualise results using `path_heatmap()` and `violation_heatmap()`.
 
-## Notes
+### Notes
 
 - The package is designed for Auckland CBD analysis and uses NZTM projection (EPSG:2193).
 - Demo outputs are included in the repository as PNG images.
