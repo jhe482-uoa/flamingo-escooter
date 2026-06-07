@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.0] — 2026-06-07
+
+### Feature
+- Initial stable release
+- Complete API documentation
+
 ## [0.4.1] — 2026-06-06
 
 ### Changed

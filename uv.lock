@@ -273,7 +273,7 @@ wheels = [
 
 [[package]]
 name = "flamingo-escooter"
-version = "0.4.0"
+version = "0.4.1"
 source = { editable = "." }
 dependencies = [
     { name = "folium" },
@@ -285,6 +285,14 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+dev = [
+    { name = "coverage" },
+    { name = "pycodestyle" },
+    { name = "pytest" },
+    { name = "ruff" },
+]
+
+[package.dev-dependencies]
 dev = [
     { name = "coverage" },
     { name = "pycodestyle" },
@@ -305,6 +313,14 @@ requires-dist = [
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.15.0" },
 ]
 provides-extras = ["dev"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "coverage", specifier = ">=7.0.0" },
+    { name = "pycodestyle", specifier = ">=2.14.0" },
+    { name = "pytest", specifier = ">=9.0.3" },
+    { name = "ruff", specifier = ">=0.15.0" },
+]
 
 [[package]]
 name = "folium"

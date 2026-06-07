@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "flamingo-escooter"
-version = "0.4.1"
+version = "1.0.0"
 description = "Tools for analyzing Flamingo E-Scooter movement patterns, trip data cleaning, and parking restriction compliance within the Auckland CBD."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -52,6 +52,17 @@ dev = [
     "pycodestyle>=2.14.0",
     "ruff>=0.15.0",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+    "coverage>=7.0.0",
+    "pycodestyle>=2.14.0",
+    "ruff>=0.15.0",
+]
+
+[tool.uv]
+default-groups = ["dev"]
 
 [project.urls]
 Homepage = "https://github.com/jhe482-uoa/flamingo-escooter"
